@@ -1,7 +1,6 @@
 ---
 title: some products
 date: 2018-11-19 16:16:36
-tags: product
 ---
 
 | products                              | android | ios | web | server | cms | wechat-web | wechat-app |
