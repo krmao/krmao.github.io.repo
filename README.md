@@ -27,9 +27,16 @@ $ hexo deploy
 ## 删除文章
 找到 source 目录下对应的文章, 删除, 然后执行如下命令
 ```
-hexo g
-hexo d
-hexo s
+hexo g && hexo d && hexo s
+```
+
+## 发布到 github pages
+```
+hexo g && hexo d 
+cd ../krmao.github.io && git checkout . && git pull && rm -rf !(.git) && pwd && ls -al
+cp -rf ../krmao.github.io.repo/public/ ./ && pwd && ls -al
+git add . && git commit -m "update blogs" && git push && cd ../krmao.github.io.repo && pwd && ls -al
+git add . && git commit -m "update blogs" && git push && pwd && ls -al
 ```
 
 ## 参考
