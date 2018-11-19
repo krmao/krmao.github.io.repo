@@ -1,8 +1,9 @@
 # Header
 menu:
   Home: /
+  Products: /products
   Archives: /archives
-rss: /atom.xml
+# rss: /atom.xml
 
 # Content
 excerpt_link: Read More

@@ -70,6 +70,11 @@ time_format: HH:mm:ss
 per_page: 10
 pagination_dir: page
 
+search:
+  path: search.xml
+  field: all # post page all
+  content: true
+
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/

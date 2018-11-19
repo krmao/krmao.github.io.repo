@@ -132,8 +132,8 @@ $nav-link
 
 .search-form
   position: absolute
-  width 120px
-  top: 15px
+  top: 0
+  left: 0
   right: 0
   background: #fff
   padding: 5px 15px
