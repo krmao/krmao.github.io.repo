@@ -63,8 +63,8 @@ category_map:
 tag_map:
   REACT-NATIVE: reactnative
   SPRING-BOOT: springboot
-  算法: algorithm
   CENTOS: centos
+  算法: algorithm
   服务端: service
   移动端: mobile
   安装: install
