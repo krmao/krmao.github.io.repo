@@ -1,0 +1,20 @@
+<div id="gitment"></div>
+
+<!-- 汉化版 -->
+<!--<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">-->
+<!--<script src="https://billts.site/js/gitment.js"></script>-->
+
+<link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script>
+<script>
+	var gitment = new Gitment({
+		id: '<%= page.date %>',  // max length 50
+		owner: "krmao",
+		repo: "krmao.github.io",
+		oauth: {
+			client_id: "fcb8807f8dd032053916",
+			client_secret: "c8a88998914e0f4774aed972ef12d0bba6510b60"
+		}
+	})
+	gitment.render('gitment')
+</script>
