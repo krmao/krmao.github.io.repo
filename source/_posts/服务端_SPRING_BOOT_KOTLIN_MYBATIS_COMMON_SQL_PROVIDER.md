@@ -1,6 +1,7 @@
 ---
 title: 服务端_SPRING_BOOT_KOTLIN_MYBATIS_COMMON_SQL_PROVIDER
 date: 2018-11-19 18:29:49
+categories: [技术]
 tags: [服务端,SPRING-BOOT]
 ---
 

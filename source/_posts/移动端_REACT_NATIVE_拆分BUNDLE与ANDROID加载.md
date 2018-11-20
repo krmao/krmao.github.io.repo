@@ -1,6 +1,7 @@
 ---
 title: 移动端_REACT_NATIVE_拆分BUNDLE与ANDROID加载
 date: 2018-11-19 18:29:49
+categories: [技术]
 tags: [移动端,REACT-NATIVE]
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: 算法_00002_Dijkstra
 date: 2018-11-19 18:29:49
+categories: [技术]
 tags: [算法]
 ---
 

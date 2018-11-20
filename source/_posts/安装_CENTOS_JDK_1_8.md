@@ -1,6 +1,7 @@
 ---
 title: 安装_CENTOS_JDK_1_8
 date: 2018-11-19 18:29:49
+categories: [技术]
 tags: [安装,CENTOS]
 ---
 

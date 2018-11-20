@@ -13,7 +13,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://github.com/krmao
+url: krmao.gihub.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -56,7 +56,20 @@ index_generator:
 # Category & Tag
 default_category: uncategorized
 category_map:
+  技术: technology
+  思考: thinking
+  小说: story
+  其他: other
 tag_map:
+  REACT-NATIVE: reactnative
+  SPRING-BOOT: springboot
+  算法: algorithm
+  CENTOS: centos
+  服务端: service
+  移动端: mobile
+  安装: install
+  安卓: android
+  苹果: ios
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date

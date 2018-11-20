@@ -1,6 +1,7 @@
 ---
 title: 移动端_IOS_UICOLLECTIONVIEW_CELL_自适应大小
 date: 2018-11-19 18:29:49
+categories: [技术]
 tags: [移动端,IOS]
 ---
 
