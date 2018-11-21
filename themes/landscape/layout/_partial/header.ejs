@@ -1,5 +1,7 @@
 <header id="header">
-    <div id="banner"></div>
+    <div id="banner">
+        <canvas id="canvas" style="width: 100%;height: 100%"></canvas>
+    </div>
     <div id="header-outer" class="outer">
         <div id="header-title" class="inner">
             <h1 id="logo-wrap">
@@ -33,6 +35,7 @@
 
 <%- js('js/jquery-3.3.1.min') %>
 <%- js('js/search') %>
+<%- js('js/canvas-nests') %>
 <script type="text/javascript" id="local.search.active">
 	var inputArea = document.querySelector("#local-search-input");
 	inputArea.onclick = function () {
