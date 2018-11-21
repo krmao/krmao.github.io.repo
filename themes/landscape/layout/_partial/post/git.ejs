@@ -6,9 +6,14 @@
 
 <link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script>
+<%- js('js/md5') %>
 <script>
+	var idPrimary = '<%= page.title %>' + '-' + '<%= page.date %>';
+	var idMD5 = md5(idPrimary);
+	console.log("idPrimary:" + idPrimary);
+	console.log("idMD5:" + idMD5);
 	var gitment = new Gitment({
-		id: '<%= page.date %>',  // max length 50
+		id: idMD5, // max length 50
 		owner: "krmao",
 		repo: "krmao.github.io",
 		oauth: {
