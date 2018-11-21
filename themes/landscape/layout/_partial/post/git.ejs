@@ -8,17 +8,17 @@
 <script src="https://jjeejj.github.io/js/gitment.js"></script>
 <%- js('js/md5') %>
 <script>
+
 	var idPrimary = '<%= page.title %>' + '-' + '<%= page.date %>';
 	var idMD5 = md5(idPrimary);
-	console.log("idPrimary:" + idPrimary);
-	console.log("idMD5:" + idMD5);
+
 	var gitment = new Gitment({
 		id: idMD5, // max length 50
-		owner: "krmao",
-		repo: "krmao.github.io",
+		owner: '<%= config.gitment.owner %>',
+		repo: '<%= config.gitment.repo %>',
 		oauth: {
-			client_id: "fcb8807f8dd032053916",
-			client_secret: "c8a88998914e0f4774aed972ef12d0bba6510b60"
+			client_id: '<%= config.gitment.client_id %>',
+			client_secret: '<%= config.gitment.client_secret %>'
 		}
 	})
 	gitment.render('gitment')

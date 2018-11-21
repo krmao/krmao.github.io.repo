@@ -92,6 +92,12 @@ search:
 ## Themes: https://hexo.io/themes/
 theme: landscape
 
+gitment:
+  owner: krmao
+  repo: krmao.github.io
+  client_id: fcb8807f8dd032053916
+  client_secret: c8a88998914e0f4774aed972ef12d0bba6510b60
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
