@@ -1,0 +1,109 @@
+---
+title: 移动端_IOS【PHP基础入门】配置Phpstorm与xampp
+date: 2013年07月12日 17:03:23
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<div><strong>1 Xampp</strong> </div>
+<div><strong><br></strong></div>
+<div><a href="http://blog.csdn.net/jonathanlin2008/article/details/6210782%E2%80%8D" rel="nofollow"></a></div>
+<div><strong>安装好xampp，配置 httpd.conf</strong> </div>
+<div>191/221 行 DocumentRoot 路径改为 "F:/PHP"  （我的工作空间）,以后项目就放在这个文件夹里。</div>
+<div></div>
+<div> </div>
+<div><strong>配置 php.ini</strong> </div>
+<div> </div>
+<div>Windows 下</div>
+<div>
+<pre><code class="language-python">[XDebug]
+zend_extension = "E:\Software\Develop\xampp\php\ext\php_xdebug.dll"
+xdebug.profiler_append = 0
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 0
+xdebug.profiler_output_dir = "E:\Software\Develop\xampp\tmp"
+xdebug.profiler_output_name = "cachegrind.out.%t-%s"
+xdebug.remote_enable = on
+xdebug.remote_handler = "dbgp"
+xdebug.remote_host = "127.0.0.1"
+xdebug.trace_output_dir = "E:\Software\Develop\xampp\tmp"
+xdebug.remote_port = 9000</code></pre>
+</div>
+<div><br></div>
+<div>重启 Apache </div>
+<div> </div>
+<div>如果是Linux 需要下载 xdebug</div>
+<div><a href="http://code.activestate.com/komodo/remotedebugging/" rel="nofollow">http://code.activestate.com/komodo/remotedebugging/</a></div>
+<div> </div>
+<div>解压后找到合适版本的xdebug.so并将其复制到/opt/lampp/lib/php/extensions/中。然后修改/opt/lampp/etc/php.ini文件，</div>
+<div>在其最后加上</div>
+<div><code></code>
+<div>
+<div><br></div>
+<div>
+<pre><code class="language-python">[XDebug]
+zend_extension="/opt/lampp/lib/php/extensions/xdebug.so"
+xdebug.remote_enable=true
+xdebug.remote_host=127.0.0.1
+xdebug.remote_port=9000
+xdebug.remote_handler=dbgp
+xdebug.profiler_enable=1
+xdebug.profiler_output_dir="/opt/lampp/tmp"</code></pre>
+<br></div>
+</div>
+</div>
+<div>lampp restart</div>
+<div><br></div>
+<div><strong>2 PhpStorm</strong></div>
+<div> </div>
+<div><strong>2.1    进入File&gt;Settings&gt;PHP&gt;Servers，添加一个 Server</strong> </div>
+<div> </div>
+<div><code></code>
+<div>
+<div>
+<pre><code class="language-python">Name     :  localhost
+Host     :  localhost
+Port     :  80
+Debugger :  Xdebuger</code></pre>
+</div>
+<br></div>
+</div>
+<div> </div>
+<div><strong>2.2    进入File&gt;Settings&gt;PHP&gt;Debug</strong></div>
+<div> </div>
+<div>
+<pre><code class="language-python">Debug port    :    9000</code></pre>
+</div>
+<br><div> </div>
+<div><strong>2.3    打开 Edit Configurations</strong></div>
+<div> </div>
+<div align="left"></div>
+<div> <img src="" alt=""><img src="https://img-blog.csdn.net/20130712170415984?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbWtyMTI3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<div><br></div>
+<div><strong><u>添加一个 PHP Web Application</u></strong></div>
+<div><strong><u><br></u></strong></div>
+<div> <img src="" alt=""><img src="https://img-blog.csdn.net/20130712170419953?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbWtyMTI3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""></div>
+<div align="left"></div>
+<div> </div>
+<div>运行时 就用这个 Web 运行调试，搞定。</div>
+<div>还不行就试试修改 上图中的Defaults，我把 server都改成了自己的localhost ,浏览器改成了firefox。</div>
+<div><br></div>
+<div>成果就是设置好断点,</div>
+<div>debug 运行，或者直接 shift + F9</div>
+<div>则会自动打开火狐浏览器并且停留在断点处。</div>
+<div><br></div>
+<div><br></div>
+<div><strong><span style="font-size:18px;">以后遇到新问题是将更新本文档，免得后面人又得重新探索，也欢迎大家提出问题。</span></strong></div>
+<div> </div>
+<div><span style="font-size:18px;color:#ff0000;"><strong>转载请注明出处</strong></span></div>
+<div><br></div>
+<div> </div>
+            </div>
+

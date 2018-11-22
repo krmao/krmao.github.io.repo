@@ -1,0 +1,139 @@
+---
+title: 移动端_IOS【Android基础入门〖8〗】SimpleAdapter之一
+date: 2013年08月06日 15:22:11
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<div>SimpleAdapter</div>
+ <br><h2>Activity</h2>
+<p><strong>主程序</strong></p>
+<p>listItem 中存放所有要显示的所有列数据，每 new <strong>一个map</strong>，即 在显示的列表中 新建<strong>一行</strong>数据，Title (自定义)、Image(自定义) 只是别名，分别对应 每一行的布局 item_layout 中的 资源 ID ， Title =&gt; R.id.item_text，Image =&gt; R.id.item_image。</p>
+<p><br></p>
+<pre><code class="language-java">package com.michael.training;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+public class MainActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main_layout);
+		
+		ListView listView = (ListView)findViewById(R.id.mListView);
+		ArrayList&lt;HashMap&lt;String, Object&gt;&gt; listItem = new ArrayList&lt;HashMap&lt;String, Object&gt;&gt;();
+		
+        HashMap&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();
+        map.put("Title", "NO.1	开发环境搭建");
+        map.put("Image", R.drawable.item);
+        listItem.add(map);
+        
+        map = null;
+        map = new HashMap&lt;String, Object&gt;();
+        map.put("Title", "NO.2	四大组件");
+        map.put("Image", R.drawable.item);
+        listItem.add(map);
+		
+		SimpleAdapter listAdapter = new SimpleAdapter(	this,
+								listItem,
+								R.layout.item_layout,
+								new String[] {"Title", "Image"},
+								new int[] {R.id.item_text,R.id.item_img});
+		listView.setAdapter(listAdapter);
+		listView.setOnItemClickListener(listener);
+	}
+	
+	OnItemClickListener listener=new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView&lt;?&gt; arg0, View arg1, int arg2,long arg3) {
+			Toast.makeText(getApplicationContext(),((Integer)arg2).toString()+"-----"+((Integer)arg2).toString(), Toast.LENGTH_SHORT).show();
+		}
+	};
+	
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+}
+</code></pre>
+<br><h2>main_layout.xml</h2>
+<div><strong>主页面布局</strong></div>
+<div>只放了个ListView。</div>
+<pre><code class="language-html">&lt;RelativeLayout   xmlns:android = "http://schemas.android.com/apk/res/android"
+     xmlns:tools = "http://schemas.android.com/tools"
+     android:layout_width = "match_parent"
+     android:layout_height = "match_parent"
+     tools:context = ".MainActivity"  &gt;
+    &lt;ListView  
+         android:id = "@+id/mListView"
+         android:layout_width = "match_parent"
+         android:layout_height = "match_parent" /&gt;
+&lt;/RelativeLayout&gt;</code></pre>
+<h2>item_layout.xml</h2>
+<div><strong>item布局</strong></div>
+<div>即ListView中每一行显示的布局，我定义了一个图片和一个文本。</div>
+<pre><code class="language-html">&lt;? xml   version = "1.0"   encoding = "utf-8" ?&gt;
+&lt;RelativeLayout   xmlns:android = "http://schemas.android.com/apk/res/android"
+     android:layout_width = "fill_parent"
+     android:layout_height = "match_parent"
+     android:layout_gravity = "center_vertical"   xmlns:tools = "http://schemas.android.com/tools"   tools:ignore = "HardcodedText" &gt;
+    &lt;ImageView
+         android:id = "@+id/item_img"
+         android:layout_width = "wrap_content"
+         android:layout_height = "wrap_content"
+         android:layout_alignParentTop = "true"
+         android:layout_marginLeft = "10dp"
+         android:src = "@drawable/item"
+         android:contentDescription = "imageflag"   /&gt;
+    &lt;TextView
+         android:id = "@+id/item_text"
+         android:layout_width = "wrap_content"
+         android:layout_height = "wrap_content"
+         android:layout_alignBottom = "@+id/item_img"
+         android:layout_alignParentRight = "true"
+         android:layout_alignParentTop = "true"
+         android:layout_marginTop = "4dp"
+         android:layout_marginLeft = "24dp"
+         android:layout_toRightOf = "@+id/item_img"
+         android:gravity = "center_vertical"
+         android:text = "环境搭建"
+         android:textStyle = "bold"   /&gt;
+&lt;/RelativeLayout&gt;</code></pre>
+<p><br></p>
+<h2>成果</h2>
+<img src="https://img-blog.csdn.net/20130806152000234?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbWtyMTI3/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt=""><br><div><br></div>
+<div><br></div>
+<div><strong><span style="color:#ff0000;">转载请注明出处！</span></strong></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><span style="font-size:10pt;font-family:'Courier New';color:#e79e3c;"><strong><code></code></strong></span></div>
+<div><span style="font-size:10pt;font-family:'Courier New';color:#e79e3c;"><strong><code></code></strong></span></div>
+            </div>
+

@@ -1,0 +1,164 @@
+---
+title: 移动端_IOS【Android基础入门〖15〗】Shape圆角输入框
+date: 2013年09月26日 08:49:48
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h1>1 简介</h1>
+<div>本文主要介绍通过 shape 来设置 EditText 的圆角。</div>
+<div> </div>
+<h1>2 shape 的设置</h1>
+<div> </div>
+<p>shape_life_search.xml <strong>放在 res/drawable 文件夹内</strong></p>
+<p></p>
+<pre><code class="language-html">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+    &lt;!-- 角度 --&gt;
+    &lt;corners android:radius="100dp"/&gt;
+    &lt;!-- 填充色 --&gt;
+    &lt;solid android:color="#ffffff"/&gt;
+    &lt;!-- 描边 设置线宽及颜色 --&gt;
+    &lt;stroke android:color="#cccacb"
+        android:width="1dp"/&gt;
+&lt;/shape&gt;</code></pre>
+<br><br><p></p>
+<div><span style="font-size:10pt;font-family:'Courier New';color:#008080;"><code></code></span></div>
+<h1>3 shape 的使用</h1>
+<div> </div>
+<div>在 activity_main.xml 主布局中如此使用</div>
+<div><br></div>
+<div>
+<pre><code class="language-html">&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f5f5f5"
+    tools:ignore="HardcodedText,ContentDescription" &gt;
+    
+    &lt;!-- Head start --&gt;
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="#ff5a54"&gt;
+        &lt;ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/head_left" /&gt;
+        &lt;TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="周边生活"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"/&gt;
+        &lt;ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/head_right" /&gt;
+    &lt;/LinearLayout&gt;
+    &lt;!-- Head end   --&gt;
+    &lt;!-- Search start--&gt;
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:layout_margin="10dp"&gt;
+        &lt;EditText
+            android:id="@+id/search_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/search_left"
+              android:background="@drawable/shape_life_search"
+              android:hint="请输入商户或地址"
+            android:padding="10dp"
+            android:textColorHint="#b7b7b7"
+            android:textStyle="bold"/&gt;
+    &lt;/LinearLayout&gt;
+    &lt;!-- Search end  --&gt;
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" &gt;
+        &lt;ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" /&gt;
+    &lt;/LinearLayout&gt;
+&lt;/LinearLayout&gt;</code></pre>
+<br><br></div>
+<h1>4 用到的资源</h1>
+<div> </div>
+<div>head_left.png</div>
+<div><img src="https://img-blog.csdn.net/20130926084900312" alt=""><br></div>
+<div>
+<div></div>
+</div>
+<div>head_right.png</div>
+<div><img src="https://img-blog.csdn.net/20130926084952109" alt=""><br></div>
+<div>
+<div></div>
+</div>
+<div>search_left.png</div>
+<div><img src="https://img-blog.csdn.net/20130926084910609" alt=""><br></div>
+<div>
+<div></div>
+<div> </div>
+</div>
+<div> </div>
+<h1>5 隐藏标题栏</h1>
+<div> 
+<pre><code class="language-java">package com.ui;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Window;
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        //隐藏应用程序标题栏    (能看到手机通知栏)
+         requestWindowFeature(Window.FEATURE_NO_TITLE);                                                                             
+        //设置全屏            (手机通知栏也被隐藏)
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        setContentView(R.layout.activity_main);
+    }
+}</code></pre>
+<br></div>
+<h1>6 结果预览</h1>
+<div> </div>
+<div><strong><span style="color:#ff0000;">注：在 eclipse 的 layout 布局预览功能中，圆角不是很明显，但是安装到模拟器后就正常显示了，具体原因未知。</span></strong></div>
+<div> </div>
+<div>在 eclipse 中预览结果</div>
+<div></div>
+<div> <img src="https://img-blog.csdn.net/20130926084707343" alt=""></div>
+<div>在模拟器中的结果</div>
+<div></div>
+<div> <img src="https://img-blog.csdn.net/20130926084714546" alt=""></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><span style="color:rgb(54,46,43);font-family:Arial;font-size:14.44444465637207px;line-height:25.98958396911621px;"><span style="font-size:14.44444465637207px;line-height:25.98958396911621px;"><strong> <span style="color:rgb(255,0,0);font-size:17.77777862548828px;line-height:25.98958396911621px;"><u>注：转载请注明出处
+ :)   毕竟代码是一个一个敲出来的啊，O(∩_∩)O~</u></span></strong></span></span><br></div>
+<div><br></div>
+<div><br></div>
+<div> </div>
+<div> </div>
+<div> </div>
+            </div>
+

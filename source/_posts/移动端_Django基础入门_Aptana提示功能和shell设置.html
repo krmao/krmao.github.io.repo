@@ -1,0 +1,31 @@
+---
+title: 移动端_IOS【Django基础入门】Aptana提示功能和shell设置
+date: 2012年07月20日 11:20:31
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p>1：以前用Aptana 开发 Django 一直没有代码提示功能，很不方便，今天无意间找到解决方案：</p>
+<p><span></span>在 自己的项目上 右击--&gt;Properties--&gt;PyDev - PYTHONPATH</p>
+<p><span></span>在 右边 Source Folders 中 点击 Add source folder ，选中自己的项目即可，重启eclipse。</p>
+<p>2：shell设置：</p>
+<p><span></span>在自己的项目上 右击--&gt;Django--&gt;Shell with django environment </p>
+<p><span></span>如果出现 ImportError: No module named myappname.settings 错误，</p>
+<p><span></span>做如下修改：</p>
+<p><span>在 自己的项目上 右击--&gt;Properties</span>--&gt;PyDev - Django</p>
+<p><span></span>在 Django settings module 的值 myappname.settings 修改为 settings 即可，重启eclipse。</p>
+<p>（如果没有成功，可能项目设置各有区别，我的建议是问题估计就在这，多多尝<span></span>试修改。）</p>
+<p>注：出现这个错误后，研究了好长时间，通过浏览国外的网站 说要 添加设置 DJANGO_SETTINGS_MODULE ，PYTHONPATH 等环境变量</p>
+<p><span></span>都没有成功，最后把 DJANGO_SETTINGS_MODULE ，PYTHONPATH 等环境变量删了，做如上第二步修改成功了。</p>
+<p><span></span>介于国内关于Django+Aptana(或者 Eclipse) 问题的资料甚少，特此记下，以供同道中人参考。</p>
+<p><span></span></p>
+<p><span></span> </p>
+            </div>
+

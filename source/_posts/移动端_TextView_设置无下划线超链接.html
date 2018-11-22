@@ -1,0 +1,29 @@
+---
+title: 移动端_IOSTextView 设置无下划线超链接
+date: 2014年11月04日 13:47:44
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p><br></p>
+<p></p><pre><code class="language-java">// 设置无下划线超链接 start
+String textStr = "13771839951;021-12345678";
+text.setAutoLinkMask(Linkify.PHONE_NUMBERS);
+text.setText(textStr);
+Spannable s = (Spannable) text.getText();
+s.setSpan(new UnderlineSpan() {
+	@Override
+	public void updateDrawState(TextPaint ds) {
+		ds.setColor(ds.linkColor);
+		ds.setUnderlineText(false);
+	}
+}, 0, textStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+// 设置无下划线超链接 end</code></pre><br>            </div>
+

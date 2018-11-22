@@ -1,0 +1,80 @@
+---
+title: 移动端_IOS【数据结构与算法 02】选择排序
+date: 2014年09月10日 14:56:14
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h3><span style="font-size:12px;">算法思想：</span></h3>
+<p></p>
+<ul><li>遍历数组array[N]，索引为 i，然后算出[i+1,N-1]区间中的最小数，与array[i]交换，最后一个数因为只有一个，所以不用比较外循环为 N-2次</li></ul><p></p>
+<p><a href="http://blog.csdn.net/mkrcpp/article/details/39181077" rel="nofollow"><strong>博客地址：http://blog.csdn.net/mkrcpp/article/details/39181077</strong></a><br></p>
+<p></p>
+<pre><code class="language-java">import java.util.Arrays;
+
+/***
+ * @title 选择排序
+ * @author michael.mao
+ * @date 2014年9月10日 下午2:32:01
+ * @version V1.0
+ */
+public class SelectionSort
+{
+	/***
+	 * @title 遍历数组
+	 *        array[N]，然后算出[i+1,N-1]区间中的最小数，与array[i]交换，最后一个数因为只有一个，所以不用比较外循环为
+	 *        N-2次
+	 * @param array
+	 * @author michael.mao
+	 * @date 2014年9月10日 下午2:33:17
+	 * @version V1.0
+	 */
+	public static void execute(int[] array)
+	{
+		int tmp = 0;
+		for (int i = 0, min = i; i &lt; array.length - 1; i++)
+		{
+			for (int j = i + 1; j &lt; array.length; j++)
+				if ( array[min] &gt; array[j] )
+					min = j;
+
+			if ( i != min )
+			{
+				tmp = array[i];
+				array[i] = array[min];
+				array[min] = tmp;
+			}
+		}
+	}
+
+	// 循环测试次数
+	public static int LOOP_COUNT = 100;
+	public static int ARRAY_SIZE = 10000;
+
+	public static void main(String[] args)
+	{
+		int[] mArray = Common.getArray(ARRAY_SIZE);
+		int allTime = 0;
+		for (int i = 0; i &lt; LOOP_COUNT; i++)
+		{
+			// 拷贝数组
+			int[] tmpArray = Arrays.copyOf(mArray, ARRAY_SIZE);
+			long tmpTime = System.currentTimeMillis();
+			execute(tmpArray);
+			allTime += System.currentTimeMillis() - tmpTime;
+		}
+		System.err.println("数组大小为(" + ARRAY_SIZE + ")的" + LOOP_COUNT + "次选择排序的平均耗时为：" + allTime / (float) LOOP_COUNT);
+	}
+}
+</code></pre><br><pre><code class="language-html">数组大小为(10000)的100次选择排序的平均耗时为：39.29 ms</code></pre><br><br><p></p>
+<p><br></p>
+<p><br></p>
+            </div>
+

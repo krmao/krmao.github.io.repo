@@ -1,0 +1,112 @@
+---
+title: 移动端_IOS【Android基础入门〖14〗】SharedPreferences
+date: 2013年09月25日 22:50:58
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h1>1 简介</h1>
+<div>
+<p>SharedPreferences是一种轻量级的数据存储方式,它可以用键值对的方式把简单数据类型（boolean、int、float、long和String）存储在应用程序的私有目录下(data/data/[包名] /shared_prefs/)自己定义的xml文件中</p>
+</div>
+<div><strong>SharedPreferences 创建时可选的模式</strong></div>
+<div>
+<hr></div>
+<div><strong><span style="font-size:12px;color:#333399;">MODE_PRIVATE</span></strong>                          //该文件只能被应用本身访问，写入的内容会覆盖原文件的内容</div>
+<div>
+<div><strong><span style="color:#333399;"><del>MODE_WORLD_READABLE</del></span></strong>     //该文件可以被其他应用读取 (<span style="color:#ff0000;">不推荐使用，不安全</span>)<br><strong><span style="color:#333399;"><del>MODE_WORLD_WRITEABLE</del></span></strong>    //该文件可以被其他应用写入(<span style="color:#ff0000;">不推荐使用，不安全</span>)<br><strong><span style="color:#333399;">MODE_APPEND</span></strong>                         //该模式会检查文件是否存在，存在就往文件追加内容，否则就创建新文件</div>
+<div>
+<hr></div>
+</div>
+<div> </div>
+<h1>2 具体实现如下：</h1>
+<div><br></div>
+<h2>2.1 主要代码</h2>
+<div><br></div>
+<div>MainActivity.java</div>
+<div>
+<pre><code class="language-java">package com.michael.mysharedpreferences;
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.widget.TextView;
+public class MainActivity extends Activity {
+    public static final String SETTINGS_NAME="mysettings";
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        //开始配置 SharedPreferences
+        //---------------------------------------
+        //第一个参数为 配置文件名
+        SharedPreferences spref = getSharedPreferences(SETTINGS_NAME, MODE_PRIVATE);
+        Editor editor=spref.edit();
+        
+        //保存数据至配置文件
+        editor.putString("user1", "michael");
+        editor.putInt("user1_age", 24);
+        editor.putString("user1_sex", "男");
+        
+        editor.commit();
+        //---------------------------------------
+        //结束
+        
+        
+        
+        //现在开始测试获取数据
+        //---------------------------------------
+        String str;
+        str=spref.getString("user1", "default");
+        str+='\n';
+        str+=spref.getInt("user1_age", 0);
+        str+='\n';
+        str+=spref.getString("user1_sex", "default");
+        str+='\n';
+        
+        TextView textview=(TextView)findViewById(R.id.textview);
+        textview.setText(str);
+        //---------------------------------------
+    }
+}</code></pre>
+</div>
+<br><h2>2.2 布局文件</h2>
+<div><br></div>
+<div>activity_main.xml</div>
+<div><br></div>
+<div>
+<pre><code class="language-html">&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" &gt;
+    &lt;TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/&gt;
+&lt;/LinearLayout&gt;</code></pre>
+<br><br></div>
+<h1>3 运行结果</h1>
+<div><br></div>
+<div> <img src="https://img-blog.csdn.net/20130925224927218" alt=""></div>
+<div></div>
+<div> <img src="https://img-blog.csdn.net/20130925224854281" alt=""></div>
+<div> <img src="https://img-blog.csdn.net/20130925224903734" alt=""></div>
+<div></div>
+<div> </div>
+<div></div>
+<div> </div>
+<div>参考 ：<a href="http://www.oschina.net/question/54100_31831" rel="nofollow">http://www.oschina.net/question/54100_31831</a></div>
+<div> </div>
+<div><strong><span style="color:rgb(54,46,43);font-family:Arial;font-size:14.44444465637207px;line-height:25.98958396911621px;"><span style="color:rgb(255,0,0);font-size:17.77777862548828px;line-height:25.98958396911621px;"><u>转载请注明出处!</u></span></span></strong></div>
+<div> </div>
+            </div>
+

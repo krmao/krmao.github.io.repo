@@ -1,0 +1,69 @@
+---
+title: 移动端_IOS【Android基础入门〖0〗】AndroidStudio
+date: 2013年05月16日 10:41:29
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p>下载地址：<a href="http://developer.android.com/sdk/installing/studio.html#download" rel="nofollow">http://developer.android.com/sdk/installing/studio.html#download</a></p>
+<p>如果出现启动不了的问题</p>
+<p>进入AndroidStudio安装目录 E:\software\AndroidStudio\bin ，运行studio.bat</p>
+<p>出现</p>
+<p></p>
+<div></div>
+<div style="text-align:center;"><img src="https://img-blog.csdn.net/20130516103534436" alt=""></div>
+<p></p>
+<p></p>
+<div></div>
+<br><p></p>
+<p>原来是没有设置JAVA的环境变量！</p>
+<p><strong>No.1 </strong><br>
+在系统变量里点击新建，变量名填写JAVA_HOME<br><br></p>
+<pre><code class="language-cpp">变量名    JAVA_HOME
+变量值    C:\Program Files\Java\jdk1.7.0_21</code></pre>
+<br><strong>No.2 </strong><br>
+在系统变量里点击新建变量名填写CLASSPATH<br><br><pre><code class="language-cpp">变量名    CLASSPATH
+变量值    .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar</code></pre>
+<br><strong>No.3 </strong><br>
+在系统变量里找到Path变量，这是系统自带的，在变量最后加上<br><br><pre><code class="language-cpp">;%JAVA_HOME%\bin;%JAVA_HOME%\jre\bin</code></pre>
+<br>
+注意前面的分号。
+<p></p>
+<p>设置好后，打开AndroidStudio，新建一个项目，</p>
+<p><strong>Project location</strong> 中设置路径时的项目文件夹必须为<strong>本地还没有的文件夹</strong>，然后点击其它的输入框，会发先 Description 不提示错误了，感谢<strong><a class="username" href="http://blog.csdn.net/king875812310" rel="nofollow">king875812310</a> </strong>的研究成果。</p>
+<p><strong>例如路径为      E:\software\AndroidWorkspace\MTank</strong>   这个<strong><u>MTank</u></strong>文件夹本地不存在。<br></p>
+<p>然后出现了一个下载更新的界面，等待</p>
+<p style="text-align:center;"><img src="https://img-blog.csdn.net/20130516104928165" alt=""><br></p>
+<p>更新玩后，就成功出现了界面了，哈哈，如下图</p>
+<p style="text-align:center;"><img src="https://img-blog.csdn.net/20130516105340631" alt=""><br></p>
+<p><span style="font-size:24px;color:#ff0000;"><strong><br></strong></span></p>
+<p>如果还不能运行 试试<span style="font-size:18px;color:#ff9966;"><strong>最新版的jdk</strong></span>吧，因为我的是最新版本，下载地址</p>
+<p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html" rel="nofollow">http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</a><br></p>
+<p><br></p>
+<p>运行截图：</p>
+<p style="text-align:center;"><img src="https://img-blog.csdn.net/20130516112914542" alt=""><br></p>
+<p><span style="font-size:24px;color:rgb(255,0,0);"><strong><br></strong></span></p>
+<p><span style="font-size:24px;color:#ff0000;"><strong>中文乱码的解决</strong></span></p>
+<p>在打开的窗口中，找到IDE <strong><u>File</u></strong> --&gt; <strong><u>Settings</u></strong>下的<u><strong>Appearance</strong></u>，在右侧勾选上“<strong><u>Override default fonts by</u></strong>”，然后点应用，我的就可以看到中文了，然后我选择了<strong><u>黑体</u></strong>，哈哈，搞定。</p>
+<p style="text-align:center;"><img src="https://img-blog.csdn.net/20130516151758202" alt=""><br></p>
+<p>参考 <a href="http://www.eoeandroid.com/thread-275485-1-1.html" rel="nofollow">http://www.eoeandroid.com/thread-275485-1-1.html</a></p>
+<p><br></p>
+<p>在代码中使用中文如果提示<strong><em><span style="color:#ff0000;"> java: 未结束的字符串文字</span></em></strong></p>
+<p>则设置项目的字符编码，我是这么设置的</p>
+<p>File --&gt; Settings </p>
+<p style="text-align:center;"><img src="https://img-blog.csdn.net/20130516153707095" alt=""><br></p>
+<p><strong><br></strong></p>
+<p><strong>搞定收工！</strong><br></p>
+<p><span style="font-size:24px;color:#ff0000;"><strong>转载请注明出处！</strong></span><br></p>
+<p style="text-align:center;"><br></p>
+<p style="text-align:center;"><br></p>
+<p style="text-align:center;"><br></p>
+            </div>
+

@@ -1,0 +1,240 @@
+---
+title: 移动端_IOS【Android基础入门〖6〗】四大组件之ContentProvider
+date: 2013年09月24日 22:09:38
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h1>简介</h1>
+<div>简而言之，ContentProvider 向别的应用程序提供数据(联系人这个应用程序提供了 它的 ContentProvider)，ContentResolver 从<strong>别的应用程序</strong>(已提供ContentProvider)获取、修改、添加数据(我们可以通过ContentResolver 来操纵联系人中的数据)。</div>
+<div> </div>
+<h1>说明</h1>
+<div>既然是四大组件之一，那么创建步骤基本相同</div>
+<div>1: 自定义 ContentProvider</div>
+<div>2: 注册</div>
+<div>3: 使用</div>
+<div> </div>
+<h1>1    自定义ContentProvider</h1>
+<p> MyProvider.java</p>
+<h6>
+</h6><pre><code class="language-java"><span style="font-weight:normal;">package com.myprovider;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+public class MyProvider extends ContentProvider{
+    DatabaseHelper dbhelper;
+    SQLiteDatabase db;
+    
+    UriMatcher UMatcher=new UriMatcher(UriMatcher.NO_MATCH);
+    
+    @Override
+    public boolean onCreate() {
+        // TODO 自动生成的方法存根
+        dbhelper=new DatabaseHelper(getContext(), "michael", null, 1);
+        
+        UMatcher.addURI("com.michael", "michael", 1);
+        UMatcher.addURI("com.michael", "michael/#", 2);
+        db=dbhelper.getWritableDatabase();
+        return true;
+    }
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        // TODO 自动生成的方法存根
+        Cursor cursor;
+        
+        switch(UMatcher.match(uri))
+        {
+        case 1:
+            cursor= db.query("michael", projection, selection, selectionArgs, null, null, sortOrder);
+            break;
+        case 2:
+            long id=ContentUris.parseId(uri);
+            String myselection="_id="+id;
+            
+            if(selection!=null)
+                myselection +=selection;    
+            
+            cursor =db.query("michael", projection, myselection, selectionArgs, null, null, sortOrder);
+            break;
+        default:
+            //非法的参数异常
+            throw new IllegalArgumentException("unknow uri" + uri.toString());
+        }
+        return cursor;
+    }
+    @Override
+    public String getType(Uri uri) {
+        // TODO 自动生成的方法存根
+        return null;
+    }
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        // TODO 自动生成的方法存根
+        long id =db.insert("michael", "username", values);
+        return ContentUris.withAppendedId(uri, id);
+    }
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        // TODO 自动生成的方法存根
+        int num;
+        switch(UMatcher.match(uri))
+        {
+        case 1:
+            num=db.delete("michael", selection, selectionArgs);
+            break;
+        case 2:
+            long id=ContentUris.parseId(uri);
+            String myselection="_id="+id;
+            
+            if(selection!=null)
+                myselection +=selection;
+            
+            num= db.delete("michael", myselection, selectionArgs);
+            break;
+        default:
+            //非法的参数异常
+            throw new IllegalArgumentException("unknow uri" + uri.toString());
+        }
+        return num;
+    }
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // TODO 自动生成的方法存根
+        int num;
+        
+        switch(UMatcher.match(uri))
+        {
+        case 1:
+            num=db.update("michael", values, selection, selectionArgs);
+            break;
+        case 2:
+            long id=ContentUris.parseId(uri);
+            String myselection="_id="+id;
+            
+            if(selection!=null)
+                myselection +=selection;
+            num=db.update("michael", values, myselection, selectionArgs);
+            break;
+        default:
+            //非法的参数异常
+            throw new IllegalArgumentException("unknow uri" + uri.toString());
+        }
+        return num;
+    }
+}</span></code></pre>
+
+<h1>2    封装的 SQLiteOpenHelper 用以操作数据库</h1>
+<p>DatabaseHelper.java</p>
+<h6>
+</h6><pre><code class="language-java"><span style="font-weight:normal;">package com.myprovider;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DatabaseHelper extends SQLiteOpenHelper {
+    public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        //创建数据库
+        db.execSQL("create table michael(_id integer primary key autoincrement ,username text);");
+        
+        //初始数据
+        ContentValues values=new ContentValues();
+        values.put("username", "张三");
+        db.insert("michael", "username", values);
+        values.put("username", "李四");
+        db.insert("michael", "username", values);
+        values.put("username", "王五");
+        db.insert("michael", "username", values);
+        values.put("username", "赵六");
+        db.insert("michael", "username", values);
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //升级数据库
+        db.execSQL("drop table if exists michael;");
+        this.onCreate(db);
+    }
+}</span></code></pre>
+
+<h1>3    注册</h1>
+<p>AndroidManifest.xml</p>
+<div>
+<pre><code class="language-html">&lt;provider
+    android:name="com.myprovider.MyProvider"
+    android:authorities="com.michael"
+    android:exported="true"/&gt;</code></pre>
+<br></div>
+<h1>4    访问数据    (在别的应用程序中亦同)</h1>
+<div>意思是，你新建一个项目，具备如下代码，仍然能操作访问 上述项目中的数据 。 这就是 ContentProvider 的神奇之处 :)</div>
+<div><br></div>
+<p>4.1 MainActivity.java</p>
+<div>
+<pre><code class="language-java">package com.myprovider;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        ContentResolver resolver=this.getContentResolver();
+        Uri uri=Uri.parse("content://com.michael/michael");
+        ContentValues values=new ContentValues();
+        values.put("username", "霸王龙");
+        resolver.insert(uri, values);
+        values.put("username", "巨无霸");
+        resolver.insert(uri, values);
+        values.put("username", "擎天柱");
+        resolver.insert(uri, values);
+        values.put("username", "大黄蜂");
+        resolver.insert(uri, values);
+        
+        Cursor cursor=resolver.query(uri, new String[]{"_id","username"}, null, null, null);
+        SimpleCursorAdapter adapter=new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, new String[]{"_id","username"}, new int[]{android.R.id.text1,android.R.id.text2}, 0);
+    
+        ListView listview=(ListView)findViewById(R.id.listview);
+        listview.setAdapter(adapter);
+    }
+}</code></pre>
+<br></div>
+<p>4.2 activity_main.xml 布局文件</p>
+<div>
+<pre><code class="language-html">&lt;ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/&gt;</code></pre>
+<br></div>
+<h1>5    效果截图</h1>
+<div><br></div>
+<div> <img src="https://img-blog.csdn.net/20130924220111437" alt=""></div>
+<div> </div>
+<div> </div>
+<div> <span style="font-size:18px;color:#ff0000;"><strong><u>转载请注明出处，毕竟代码是一个一个敲出来的 :)</u></strong></span></div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div> </div>
+            </div>
+

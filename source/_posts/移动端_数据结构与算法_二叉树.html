@@ -1,0 +1,172 @@
+---
+title: 移动端_IOS【数据结构与算法】二叉树
+date: 2013年04月16日 17:55:01
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p><br></p>
+<p><strong><span style="color:#009900;">头文件 BTree.h</span></strong></p>
+<p></p>
+<pre><code class="language-cpp">#ifndef BTREE_H
+#define BTREE_H
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+using namespace std;
+
+template&lt;class T&gt;                                     //树节点类
+class BNode
+{
+public:
+    BNode&lt;T&gt;():left(NULL),right(NULL),data(T()){}
+    BNode&lt;T&gt; *left;
+    BNode&lt;T&gt; *right;
+    T data;
+};
+
+
+template&lt;class T&gt;                                     //二叉树类
+class BTree
+{
+public:
+    BNode&lt;T&gt; *root;
+    BTree&lt;T&gt;():root(NULL){}
+    ~BTree&lt;T&gt;()
+    {
+        DestoryBTree(root);
+    }
+    void CreateBTree(BNode&lt;T&gt;* &amp;mBTree);              //构造二叉树
+    void PreorderDisplay(BNode&lt;T&gt;* &amp;mBTree);          //前序遍历
+    void InorderDisplay(BNode&lt;T&gt;* &amp;mBTree);           //中序遍历
+    void PostorderDisplay(BNode&lt;T&gt;* &amp;mBTree);         //后序遍历
+    void LevelorderDisplay(BNode&lt;T&gt;* &amp;mBTree);        //层次遍历
+    void DestoryBTree(BNode&lt;T&gt;* &amp;mBTree);             //毁灭二叉树
+};
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::CreateBTree(BNode&lt;T&gt; *&amp;mBTree)
+{
+    BNode&lt;T&gt; *tmpNode=new BNode&lt;T&gt;();
+    cout&lt;&lt;"Input:\t";
+    cin&gt;&gt;tmpNode-&gt;data;
+
+    if(tmpNode-&gt;data=="#")
+    {
+        delete tmpNode;
+        mBTree=NULL;
+        return;
+    }
+    mBTree=tmpNode;
+    CreateBTree(mBTree-&gt;left);
+    CreateBTree(mBTree-&gt;right);
+}
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::PreorderDisplay(BNode&lt;T&gt; *&amp;mBTree)     //前序遍历
+{
+    if(mBTree)
+    {
+        cout&lt;&lt;mBTree-&gt;data&lt;&lt;" ";
+        PreorderDisplay(mBTree-&gt;left);
+        PreorderDisplay(mBTree-&gt;right);
+    }
+}
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::InorderDisplay(BNode&lt;T&gt; *&amp;mBTree)      //中序遍历
+{
+    if(mBTree)
+    {
+        InorderDisplay(mBTree-&gt;left);
+        cout&lt;&lt;mBTree-&gt;data&lt;&lt;" ";
+        InorderDisplay(mBTree-&gt;right);
+    }
+}
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::PostorderDisplay(BNode&lt;T&gt; *&amp;mBTree)    //后序遍历
+{
+    if(mBTree)
+    {
+        PostorderDisplay(mBTree-&gt;left);
+        PostorderDisplay(mBTree-&gt;right);
+        cout&lt;&lt;mBTree-&gt;data&lt;&lt;" ";
+    }
+}
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::LevelorderDisplay(BNode&lt;T&gt; *&amp;mBTree)   //层次遍历
+{
+    if(mBTree)
+    {
+        BNode&lt;T&gt; *p=NULL;
+        queue&lt;BNode&lt;T&gt; *&gt;BNodeQueue;
+        BNodeQueue.push(mBTree);
+        while(!BNodeQueue.empty())
+        {
+            p=BNodeQueue.front();
+            cout&lt;&lt;p-&gt;data&lt;&lt;" ";
+            BNodeQueue.pop();
+            if(p-&gt;left)
+                BNodeQueue.push(p-&gt;left);
+            if(p-&gt;right)
+                BNodeQueue.push(p-&gt;right);
+        }
+    }
+}
+
+template&lt;class T&gt;
+void BTree&lt;T&gt;::DestoryBTree(BNode&lt;T&gt; *&amp;mBTree)        //毁灭二叉树
+{
+    if(mBTree)
+    {
+        DestoryBTree(mBTree-&gt;left);
+        DestoryBTree(mBTree-&gt;right);
+        delete mBTree;
+    }
+
+}
+
+#endif // BTREE_H
+</code></pre>
+<p><strong><span style="color:#009900;"><br></span></strong></p>
+<p><strong><span style="color:#009900;">主函数 main.cpp</span></strong></p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include "BTree.h"
+using namespace std;
+
+int main()
+{
+    cout&lt;&lt;"Create A BinaryTree Now :"&lt;&lt;endl;
+    BTree&lt;string&gt; mBTree;
+    mBTree.CreateBTree(mBTree.root);
+
+    cout&lt;&lt;endl&lt;&lt;"PreorderDisplay"&lt;&lt;endl;
+    mBTree.PreorderDisplay(mBTree.root);
+
+    cout&lt;&lt;endl&lt;&lt;"InorderDisplay"&lt;&lt;endl;
+    mBTree.InorderDisplay(mBTree.root);
+
+    cout&lt;&lt;endl&lt;&lt;"PostorderDisplay"&lt;&lt;endl;
+    mBTree.PostorderDisplay(mBTree.root);
+
+    cout&lt;&lt;endl&lt;&lt;"LevelorderDisplay"&lt;&lt;endl;
+    mBTree.LevelorderDisplay(mBTree.root);
+
+    return 0;
+}
+</code></pre>
+<br><span style="color:#009900;"><strong>结果</strong></span><br><p><img src="" alt=""></p>
+<p><img src="http://img.my.csdn.net/uploads/201304/23/1366704968_7137.png" alt=""><br></p>
+<p><span style="color:#009900;"><strong>持续更新。</strong></span></p>
+<p><strong><span style="color:#ff0000;">转载请注明出处！</span></strong></p>
+<p><br></p>
+            </div>
+

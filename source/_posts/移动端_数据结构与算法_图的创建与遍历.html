@@ -1,0 +1,133 @@
+---
+title: 移动端_IOS【数据结构与算法】图的创建与遍历
+date: 2013年04月25日 14:20:33
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p><strong><span style="font-size:18px;">图结构</span>有什么用？现在想来，网络游戏里面的自动寻路就是典型的图的路径搜索！</strong></p>
+<p><strong><br></strong></p>
+<p><strong><span style="color:#009900;">头文件Graph.h</span></strong></p>
+<p></p>
+<pre><code class="language-cpp">#ifndef GRAPH_H
+#define GRAPH_H
+#include &lt;queue&gt;
+using namespace std;
+const int MAXSIZE=5;            //暂时只定义存在5个节点 0-4
+
+class Graph                     //邻接矩阵建图
+{
+private:
+    int vertex[MAXSIZE];
+    int arc[MAXSIZE][MAXSIZE];
+    queue&lt;int&gt;vQueue;
+
+public:
+    int isVisited[MAXSIZE];     //isVisited[i] =1 表示 顶点i已被访问过，或者说，已经输出！
+    void DFSTraverse(int i);    //深度优先遍历
+    void BFSTraverse();         //广度优先遍历
+    
+    Graph();
+};
+
+Graph::Graph()
+{
+    //初始化顶点数组与边数组
+    for(int i=0;i&lt;MAXSIZE;i++)
+    {
+        vertex[i]=i;
+        isVisited[i]=0;     //顺便初始化访问标志位
+    }
+    for(int i=0;i&lt;MAXSIZE;i++)
+        for(int j=0;j&lt;MAXSIZE;j++)
+            arc[i][j]=0;
+
+    arc[0][1]=1;            //如果 顶点0-----&gt;顶点1有边，则置1
+    arc[0][4]=1;
+    arc[1][0]=1;
+    arc[1][2]=1;
+    arc[1][3]=1;
+    arc[2][1]=1;
+    arc[3][1]=1;
+    arc[3][4]=1;
+    arc[4][0]=1;
+    arc[4][3]=1;
+}
+
+void Graph::DFSTraverse(int i)  //深度优先遍历
+{
+    cout&lt;&lt;vertex[i]&lt;&lt;" "; 
+    isVisited[i]=1;
+    for(int j=0;j&lt;MAXSIZE;j++)
+        if(arc[i][j]==1 &amp;&amp; isVisited[j]==0)
+            DFSTraverse(j);
+}
+
+void Graph::BFSTraverse()       //广度优先遍历
+{
+    vQueue.push(vertex[0]);
+    isVisited[vQueue.front()]=1;
+    
+    while(!vQueue.empty())
+    {
+        cout&lt;&lt;vQueue.front()&lt;&lt;" ";
+        for(int j=0;j&lt;MAXSIZE;j++)
+        {
+            if(arc[vQueue.front()][j]==1 &amp;&amp; isVisited[j]==0)
+            {
+                vQueue.push(j);
+                isVisited[vertex[j]]=1;
+            }
+            if(arc[j][vQueue.front()]==1 &amp;&amp; isVisited[j]==0)
+            {
+                vQueue.push(j);
+                isVisited[vertex[j]]=1;
+            }
+        }
+        vQueue.pop();
+    }
+}
+#endif // GRAPH_H
+</code></pre>
+<p></p>
+<p><br></p>
+<strong><span style="color:#009900;">主函数文件 main.cpp</span></strong>
+<p></p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include "Graph.h"
+using namespace std;
+
+int main()
+{
+    Graph mGraph;
+    
+    cout&lt;&lt;"DFSTraverse:"&lt;&lt;endl;
+    mGraph.DFSTraverse(0);
+    
+    for(int i=0;i&lt;MAXSIZE;i++)
+        mGraph.isVisited[i]=0;
+    
+    cout&lt;&lt;endl&lt;&lt;"BFSTraverse:"&lt;&lt;endl;
+    mGraph.BFSTraverse();
+    return 0;
+}
+</code></pre>
+<p></p>
+<p><br></p>
+<p><span style="background-color:rgb(0,153,0);">结果：</span></p>
+<p><img src="http://img.my.csdn.net/uploads/201304/25/1366871131_3665.jpg" alt=""><br></p>
+<p><br></p>
+<strong>感觉无向图有向图相比，在深度优先遍历与广度优先遍历中几乎没啥区别，只不过邻接矩阵中的值不一样罢了。</strong>
+<p><strong>继续研究中。</strong><br><br></p>
+<p><strong><span style="color:#ff0000;">转载请注明出处！</span></strong></p>
+<p><br></p>
+<p><br></p>
+            </div>
+

@@ -1,0 +1,26 @@
+---
+title: 移动端_IOS【Android框架进阶〖04〗】MDevil 之 网络模块 Volley
+date: 2014年10月22日 16:15:31
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p>对于 Android 应用开发，基于网络请求的开源框架有不少，我喜欢用的就是 AsyncHttpClient，UniversalImageLoader。原想法是在框架中封装一套通用的请求与返回接口，那么以后项目底层不管用什么框架进行网络请求，都不会修改业务层代码，实现业务与基本功能的分离，方便后期的优化，扩展。后来跟阿里的一位朋友聊到这块，谈到android端的网络请求，觉得一款牛逼的应用，尤其的是网络请求模块，应该有一套自己的东西，而不是用别人的，突然觉得很有道理，有必要选择一套自己网络框架，方便以后做老大
+ ：）</p>
+<p>首先想到一些内存，省电，线程池等诸多关键因素，再集合当前的一些开源框架，发现 AsyncHttpClient 也是有bug 的，而且如果用 AsyncHttpClient，对于listview等网络请求，我还得引入诸如 UniversalImageLoader 来对图片进行专门的处理，以前用过volley ,觉得很不错，没有深入研究，现在研究了下，发现也是有一些问题的，比如不能进行上传下载大文件，没有进度等，不过 volley 对 android做了很多优化，不支持大文件上传下载也是有原因的，比如设置了扫描线程的优先级，使之更省电，对
+ 2.2 以上和以下版本的网络请求做了分别处理，2.2以下用了AndroidHttpClient，2.3以上使用了  HttpUrlConnection，具体原因见 <a href="http://blog.csdn.net/guolin_blog/article/details/12452307" rel="nofollow">http://blog.csdn.net/guolin_blog/article/details/12452307</a> 。觉得 Android
+ 系统是谷歌推出的，Volley 是谷歌工程师在 2013 I/O大会上推出的，最正统，遂决定研究 volley ，扩展 volley 。</p>
+<p>看了两天，发现 volley 在启动时，缓存了 主线程的 Handler，那么以后无论在主线程 or 子线程执行 volley网络请求，返回执行 onResponse 时都是主线程在执行，这是特性之一，然后接着发现 volley 初始化时开启了5个扫描线程，其中1个 缓存扫描线程，4个非缓存扫描线程，当添加一个请求时，先检查缓存是否已经有了，有则直接返回，否则再执行网络请求，这里应该就是对多图片请求的优化，volley 看翻译意思是 “万箭齐发”，寓意为加载图片像万箭齐射一样快，后期有空看能不能再搞个
+ 下载上传进度 功能，那就完美了。</p>
+<p><br></p>
+<p>随着对volley的深入，觉得不适合讲上传下载大文件集合在volley中，一共只有四个网络线程，大文件耗时的话会严重影响其他的，继续研究中。</p>
+<p><br></p>
+            </div>
+

@@ -1,0 +1,97 @@
+---
+title: 移动端_IOS【Django基础入门】空间数据库查询
+date: 2012年10月09日 17:28:54
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p>1 ：在views.py中</p>
+<p>//阿里云地图之地址转地理坐标    <a href="http://ditu.aliyun.com/jsdoc/geocode_api.html" rel="nofollow">
+http://ditu.aliyun.com/jsdoc/geocode_api.html</a>  里面有返回的数据格式。<br></p>
+<p>//参考geopy</p>
+<p></p>
+<pre><code class="language-python">address = smart_str(city.name + address).replace(' ','')import traceback
+import xml.dom.minidom
+from urllib2 import urlopen
+from sys import version_info
+from apps.address.models import City
+from apps.org.models import Vresource
+from django.utils.encoding import smart_str
+from xml.parsers.expat import ExpatError
+
+################################Quick Search###########################################
+def search(request):
+    qs = Vresource.objects.all()
+    q = request.GET.get('q', '')
+    result = util.ali_getlocation(q)
+    result = simplejson.loads(result)
+    distance = request.GET.get('distance', '1')
+    
+    if q != '':
+        myfilter = Q()
+        q = q.split(" ")
+        
+        for i in q:
+            myfilter = myfilter|Q(name__icontains=i)|Q(address__icontains=i)|Q(traffic_info__icontains=i)
+            
+        if result['level'] != -1:
+            geom = fromstr("POINT(%s %s)" % (result['lon'],result['lat']))
+            distance_from_point = {'km':distance}
+            qs = qs.filter(geometry__distance_lte=(geom, D(**distance_from_point)))         
+            myfilter = myfilter|Q(geometry__distance_lte=(geom, D(**distance_from_point)))   
+             
+        qs = qs.filter(myfilter)
+    return render_to_response('org/search.html', {'results':qs}, context_instance=RequestContext(request))
+
+###############################ali_getlocation##########################################
+
+def ali_getlocation(address, city_id=1):
+    try:
+        city = City.objects.get(id=city_id)
+        address = smart_str(city.name + address).replace(' ','').replace(' ','')
+        page = urlopen('http://gc.ditu.aliyun.com/geocoding?a=%s' %address)
+        page = decode_page(page)
+        return page
+    except:
+        print "Unexpected error:"
+        tb = traceback.format_exc()
+        print tb
+        
+def get_encoding(page, contents=None):
+    # TODO: clean up Py3k support
+    if version_info &lt; (3, 0):
+        charset = page.headers.getparam("charset") or None
+    else:
+        charset = page.headers.get_param("charset") or None
+    if charset:
+        return charset
+
+    if contents:
+        try:
+            return xml.dom.minidom.parseString(contents).encoding
+        except ExpatError:
+            pass
+
+def decode_page(page):
+    contents = page.read()
+    # HTTP 1.1 defines iso-8859-1 as the 'implied' encoding if none is given
+    encoding = get_encoding(page, contents) or 'iso-8859-1'
+    # TODO: clean up Py3k support
+    if version_info &lt; (3, 0):
+        return unicode(contents, encoding=encoding).encode('utf-8')
+    else:
+        return str(contents, encoding=encoding)        
+########################################################################################    
+</code></pre>
+<p>2 ：输出</p>
+<pre><code class="language-python">{"cityName":"","address":"江苏省,苏州市,虎丘区,","level":5,"alevel":2,"lat":31.28723,"lon":120.55216}</code></pre>
+<h3><span style="font-family:'KaiTi_GB2312';font-size:18px;color:#ff0000;font-weight:normal;background-color:rgb(255,255,204);">转载请注明出处！</span></h3>
+            </div>
+

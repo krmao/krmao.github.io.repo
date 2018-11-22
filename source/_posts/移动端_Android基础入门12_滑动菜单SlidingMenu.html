@@ -1,0 +1,164 @@
+---
+title: 移动端_IOS【Android基础入门〖12〗】滑动菜单SlidingMenu
+date: 2013年09月24日 17:34:00
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p><strong><span style="font-size:18px;">注：本篇文章基于我以前发表的文章 <a href="http://blog.csdn.net/mkrcpp/article/details/11478011" rel="nofollow"><span style="color:#ff0000;">Android 之 Fragment</span></a> 之上，稍作修改即可达到 炫酷的 滑动效果 :)</span></strong></p>
+<p></p>
+<div><span style="background-color:#c7edcc;"></span> </div>
+<div><span style="color:#ff0000;background-color:#c7edcc;"><strong><u>具体步骤如下:</u></strong></span></div>
+<h1>NO.1:    新建一个 内容布局，用于显示文章</h1>
+<div>            <span style="background-color:#c7edcc;">之所以要新建一个而不是用 right_fragment.xml  是因为 RightFragment 需要被实例化啊，哈哈，这是个重点哦。</span></div>
+<div><span style="background-color:#c7edcc;">            因为我们已不再使用之前的 main_layout.xml 了。</span></div>
+<div>            <span style="background-color:#c7edcc;">contentlayout.xml</span></div>
+<div><span style="background-color:#c7edcc;"></span>
+<pre><code class="language-html">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/right_fragment"
+    android:name="com.example.myfragments.RightFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/&gt;</code></pre>
+</div>
+<h1>NO.2:    新建一个 菜单布局，用于显示菜单</h1>
+<div>            <span style="background-color:#c7edcc;">原因与第一步的原因相同 :)</span></div>
+<div>            <span style="background-color:#c7edcc;">menulayout.xml</span></div>
+<div><span style="background-color:#c7edcc;"></span>
+<pre><code class="language-html">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_fragment"
+    android:name="com.example.myfragments.LeftFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/&gt;</code></pre>
+</div>
+<h1>NO.3:    下载并安装 SlidingMenu</h1>
+<div>            下载地址 <a href="https://github.com/jfeinstein10/SlidingMenu" rel="nofollow">
+https://github.com/jfeinstein10/SlidingMenu</a> </div>
+<div><span></span>    打开 Eclipse ，将 SlidingMenu 导入。<br></div>
+<div>            <img src="https://img-blog.csdn.net/20130924172748015" alt=""></div>
+<div>            <img src="https://img-blog.csdn.net/20130924172823500" alt=""></div>
+<div><span></span>    <img src="https://img-blog.csdn.net/20130924172828937" alt=""></div>
+<div><span></span>    </div>
+<div>            设置 项目 library 的属性，勾选 Is Library 。</div>
+<div>            <img src="https://img-blog.csdn.net/20130924172946890" alt=""></div>
+<div>            </div>
+<div>            在自己的项目中引用 library 库，我的项目为 MyFragments</div>
+<div>            <img src="https://img-blog.csdn.net/20130924172937390" alt=""></div>
+<div>            <img src="https://img-blog.csdn.net/20130924173043187" alt=""></div>
+<div>            <img src="https://img-blog.csdn.net/20130924173115390" alt=""></div>
+<div>            </div>
+<div> </div>
+<div>            由于 SlidingMenu 自带了 android-support-v4.jar，所以需要将自己项目中原有的 android-support-v4.jar 删掉。</div>
+<div>            成功导入后的截图为:</div>
+<div>            <img src="https://img-blog.csdn.net/20130924173121328" alt=""></div>
+<div>            ok，至此 SlidingMenu 已经成功引入，下面就开始使用吧 :)</div>
+<div> </div>
+<h1>NO.4:    使用 SlidingMenu</h1>
+<div>            只需要将 原 MainActivity.java 改写成如下代码即可</div>
+<div>
+<pre><code class="language-java">package com.example.myfragments;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+public class MainActivity extends Activity implements onItemSeletedListener{
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);   
+        requestWindowFeature(Window.FEATURE_NO_TITLE);   
+        
+        //开始设置滑动菜单
+        setContentView(R.layout.contentlayout);                     //设置正文的显示布局
+        //-------------------------------------------------------------------------------------
+        //NO.1    继承 SlidingActivity 方式
+        //setBehindContentView(R.layout.menulayout);                //设置左侧菜单的布局
+        //SlidingMenu menu = getSlidingMenu();
+        //-------------------------------------------------------------------------------------
+        //NO.2    非继承 SlidingActivity 方式
+        SlidingMenu menu = new SlidingMenu(this);
+        menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+        menu.setMenu(R.layout.menulayout);                            //添加菜单
+        //-------------------------------------------------------------------------------------
+        
+        
+        menu.setMode(SlidingMenu.LEFT);                                //设置菜单位置
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);        //设置菜单打开方式
+                                                                    //TOUCHMODE_FULLSCREEN     全屏模式
+                                                                    //TOUCHMODE_MARGIN         边缘模式
+                                                                    //TOUCHMODE_NONE         不能通过手势打开
+        
+        
+        menu.setShadowWidth(12);                                    //设置渐变效果宽度    位于菜单 与 内容 之间
+        menu.setShadowDrawable(R.drawable.shadow);                    //设置菜单渐变效果
+        menu.setFadeDegree(0.9f);                                    //设置淡入程度       当滑出菜单时，渐变效果由0.9 - 0 淡入
+ 
+        menu.setBehindOffset(250);                                    //设置菜单滑出后 距离屏幕右边的长度(直接设置 dp)
+        //-------------------------------------------------------------------------------------
+        //设置结束
+        
+        
+        
+        
+        
+        //Fragment 一些代码增删改
+        //添加
+        //FragmentManager fragmentmanager=getFragmentManager();
+        //FragmentTransaction fragmenttransaction=fragmentmanager.beginTransaction();
+        //LeftFragment leftfragment=new LeftFragment();
+        //fragmenttransaction.add(R.id.left_fragment, leftfragment);
+        //fragmenttransaction.commit();
+        //删除
+        //FragmentManager fragmentmanager=getFragmentManager();
+        //FragmentTransaction fragmenttransaction=fragmentmanager.beginTransaction();
+        //Fragment leftfragment=fragmentmanager.findFragmentById(R.id.left_fragment);
+        //fragmenttransaction.remove(leftfragment);
+        //fragmenttransaction.commit();
+        //替换
+        //FragmentManager fragmentmanager=getFragmentManager();
+        //FragmentTransaction fragmenttransaction=fragmentmanager.beginTransaction();
+        //fragmenttransaction.replace(R.id.left_fragment, new LeftFragment());
+        //fragmenttransaction.commit();
+    }
+    @Override
+    public void onItemSeleted(int position) {
+        RightFragment rightFragment=(RightFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
+        
+        if(rightFragment != null)
+            rightFragment.update(position);
+    }
+}</code></pre>
+</div>
+<br><div>        上述代码中用到的 渐变设置为 R.drawable.shadow   该配置文件用到的颜色值见 文章  <a href="http://blog.csdn.net/mkrcpp/article/details/11563083" rel="nofollow">Android ListView 之 SimpleAdapter 二 (包含 item 中按钮监听)</a> 中 第五节 color.xml 颜色值。</div>
+<div>
+<pre><code class="language-html">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android" &gt;
+    &lt;gradient
+        android:endColor="@color/darkblue"
+        android:centerColor="@color/darkgray"
+        android:startColor="@color/black" /&gt;
+&lt;/shape&gt;</code></pre>
+</div>
+<h1>NO.5:    滑动菜单效果展示</h1>
+<div>        <img src="https://img-blog.csdn.net/20130924173158859" alt=""></div>
+<div>        注意此处的渐变淡入效果</div>
+<div>        <img src="https://img-blog.csdn.net/20130924173209000" alt=""></div>
+<div>        渐变效果为 由 黑色-深灰色-深蓝色 渐变。</div>
+<div>        <img src="https://img-blog.csdn.net/20130924173248656" alt=""></div>
+<div>        </div>
+<br><p></p>
+<p><br></p>
+<p><span style="font-size:18px;color:#ff0000;"><strong><u>注：转载请注明出处 :)   毕竟代码是一个一个敲出来的啊，O(∩_∩)O~</u></strong></span></p>
+<p><br></p>
+<p><br></p>
+            </div>
+

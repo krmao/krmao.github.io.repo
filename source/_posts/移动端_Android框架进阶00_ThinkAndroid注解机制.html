@@ -1,0 +1,199 @@
+---
+title: 移动端_IOS【Android框架进阶〖00〗】ThinkAndroid注解机制
+date: 2013年10月29日 16:05:24
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong>/**************************************************************************************************</strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<a href="http://blog.csdn.net/mkrcpp/article/details/13509051" rel="nofollow">http://blog.csdn.net/mkrcpp/article/details/13509051</a><a href="http://blog.csdn.net/mkrcpp/article/details/13509051" rel="nofollow"></a></span></strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+<p style="color:rgb(54,46,43);line-height:25.98958396911621px;"><span style="font-family:'Microsoft YaHei';font-size:12px;"></span></p>
+<p style="color:rgb(54,46,43);line-height:25.98958396911621px;"><span style="font-weight:bold;">由于项目需要，开始研究ThinkAndroid。</span></p>
+<p style="color:rgb(54,46,43);line-height:25.98958396911621px;"><span style="font-weight:bold;">个人认为该框架的注解机制十分新颖，所以先研究这个，顺便学习下 Java 的annotation。</span></p>
+<p><strong>粗略的看了看，该机制在BaseActivity中初始化。而BaseActivity是所有Activity的基类。</strong></p>
+<p><strong>对BaseActivity进行了代码剖离，发现在BaseActivity中在onCreate函数里启动注解机制。</strong></p>
+<p></p>
+<ul><li>首先注入布局资源（绑定layout布局）</li><li>其次注入成员资源（绑定组件资源）</li><li>然后注入成员变量（初始化普通变量）</li></ul><p></p>
+<p>暂时先搞清楚第二个，怎么绑定组件资源的：</p>
+<p><strong>我写了个小demo，MyAnno</strong></p>
+<p></p>
+<ul><li><img src="" alt=""><img src="https://img-blog.csdn.net/20131029160827031" alt=""></li></ul><p></p>
+<p><strong>InjectView.java</strong></p>
+<p></p>
+<pre><code class="language-java">package com.myanno;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+/**
+ * 自定义注解，获取资源ID
+ * @使用方法
+ * 				@InjectView(id = R.id.settingIv)
+ * 				private ImageView imgSetting; 
+ * 
+ * @author 		michael.mao@sosino.com
+ * @date		2013-10-29
+ * @description @Retention: 定义注解的保留策略
+ *				@Retention(RetentionPolicy.SOURCE) 	//注解仅存在于源码中，在class字节码文件中不包含
+ *				@Retention(RetentionPolicy.CLASS)  	//默认的保留策略，注解会在class字节码文件中存在，但运行时无法获得，
+ *				@Retention(RetentionPolicy.RUNTIME)	//注解会在class字节码文件中存在，在运行时可以通过反射获取到
+ *				@Inherited							//说明子类可以继承父类中的该注解
+ *
+ *				@Target(ElementType.TYPE)   		//接口、类、枚举、注解
+ *				@Target(ElementType.FIELD) 			//字段、枚举的常量
+ *				@Target(ElementType.METHOD) 		//方法
+ * 				@Target(ElementType.PARAMETER) 		//方法参数
+ *				@Target(ElementType.CONSTRUCTOR)  	//构造函数
+ *				@Target(ElementType.LOCAL_VARIABLE)	//局部变量
+ *				@Target(ElementType.ANNOTATION_TYPE)//注解
+ *				@Target(ElementType.PACKAGE) 		//包   
+ */
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface InjectView
+{
+	/** View的ID */
+	public int id() default -1;
+}
+
+</code></pre>
+<br><strong>MainActivity.java</strong>
+<p></p>
+<p></p>
+<pre><code class="language-java">package com.myanno;
+
+import java.lang.reflect.Field;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+
+	/** 注解绑定UI元素 */
+	@InjectView(id=R.id.myimgview)
+	ImageView myimageview;
+	
+	@InjectView(id=R.id.mytext)
+	TextView mytext;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		//初始化注解绑定的成员变量
+		injectView(this);
+		
+		//直接使用UI元素
+		mytext.setText("Text0");
+		myimageview.setImageResource(R.drawable.junny);
+	}
+	
+	/** 实例化@InjectView 注解的成员*/
+	public void injectView(Activity activity)
+	{
+		Field[] fields = activity.getClass().getDeclaredFields();//得到Activity中的所有定义的字段
+		if (fields != null &amp;&amp; fields.length &gt; 0)
+		{
+			for (Field field : fields)
+			{
+				if (field.isAnnotationPresent(InjectView.class))//方法返回true，如果指定类型的注解存在于此元素上
+				{
+					Log.i("Field", field.toString());
+					
+					InjectView mInjectView = field.getAnnotation(InjectView.class);	//获得该成员的annotation
+					int viewId = mInjectView.id();	//获得该注解的id
+					View view=activity.findViewById(viewId);//获得ID为viewID的组件对象
+					
+					Log.i("Field", String.valueOf(viewId));
+					Log.i("Field", view.getClass().toString());
+					
+					try
+					{
+						field.setAccessible(true);//设置类的私有成员变量可以被访问
+						field.set(activity, view);//field.set(object,value)===object.fieldValue = value
+					} catch (Exception e) { e.printStackTrace();}
+				}
+				else
+					Log.i("Field", "该字段没有被注解");
+			}
+		}
+	}
+}
+</code></pre>
+<br><strong>布局文件 activity_main.xml</strong>
+<p></p>
+<p></p>
+<pre><code class="language-html">&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription" &gt;
+    &lt;ImageView
+        android:id="@+id/myimgview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/&gt;
+    &lt;TextView
+        android:id="@+id/mytext"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:background="@android:color/darker_gray"
+        android:textSize="30sp" /&gt;
+&lt;/LinearLayout&gt;</code></pre>
+<br><strong>实验结果</strong>
+<p></p>
+<p></p>
+<ul><li><img src="https://img-blog.csdn.net/20131029160835046" width="240" height="427" alt=""><br></li></ul><p></p>
+<p><span style="color:#009900;"><strong>即注入成功了</strong></span> <img alt="大笑" src="http://static.blog.csdn.net/xheditor/xheditor_emot/default/laugh.gif"></p>
+<p><br></p>
+<p>需要说下我遇到的问题，在以上的基础上，如果将布局文件里的TextView 和ImageView两个布局换个位置，这时候再运行下，会出现空指针异常。</p>
+<p>将Log向上翻会发现一个警告</p>
+<p></p>
+<ul><li><img src="" alt=""><img src="https://img-blog.csdn.net/20131029160840859" alt=""></li></ul><p></p>
+<p>即非法<strong><span style="color:#ff0000;">参数异常</span></strong></p>
+<p>定位到这一行</p>
+<p></p>
+<pre><code class="language-java">field.set(activity, view);</code></pre>
+<br>
+通过观察Log打印的日志
+<p></p>
+<p></p>
+<ul><li><img src="" alt=""><img src="https://img-blog.csdn.net/20131029160851984" alt=""></li></ul><p></p>
+<p>发现<strong><u>第一二行</u></strong>是对的，即获得注解的<span style="color:#ff0000;"><strong>类型和ID(ImageView 2131230720)</strong></span>都是正确的，但是通过findViewById获取view的时候，Log<strong><u>第三行</u></strong>显示的<strong><span style="color:#ff0000;">却是TextView。</span></strong></p>
+<p>百思不得其解，最后无赖之下，清理一下项目，搞定。</p>
+<p>我不知道是怎么回事，暂且推测为资源缓存吧。</p>
+<p></p>
+<p style="line-height:25.98958396911621px;"></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong>/**************************************************************************************************</strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<a href="http://blog.csdn.net/mkrcpp/article/details/13170649" rel="nofollow" style="color:rgb(106,57,6);text-decoration:none;"></a><a href="http://blog.csdn.net/mkrcpp/article/details/13509051" rel="nofollow"></a><a href="http://blog.csdn.net/mkrcpp/article/details/14166121" rel="nofollow" style="font-family:'Microsoft YaHei';font-weight:bold;line-height:25.984375px;"></a><a href="http://blog.csdn.net/mkrcpp/article/details/13509051" rel="nofollow" style="font-family:'Microsoft YaHei';font-weight:bold;line-height:25.984375px;">http://blog.csdn.net/mkrcpp/article/details/13509051</a></span></strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+            </div>
+

@@ -1,0 +1,35 @@
+---
+title: 移动端_IOS【Django基础入门】ManyToManyField跨越中间表查询
+date: 2012年07月09日 13:54:20
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p>1：在 Course 表中用到了 manytomany 生成了中间表 org_course_age_choice</p>
+<p></p>
+<pre><code class="language-python">class Course(models.Model):
+    org = models.ForeignKey(Org)
+    name = models.CharField(max_length=200)
+    age_choice = models.ManyToManyField(Category,verbose_name=_('course_age_choices'), related_name='course_age_choices', blank=True)
+</code></pre>
+<p></p>
+<p><br></p>
+2：生成的 中间表 org_course_age_choice
+<p><br><img src="http://my.csdn.net/uploads/201207/09/1341813376_7220.jpg" alt=""><br></p>
+<p><br></p>
+<p>3：我想通过course_id 获得 category 中的数据，原先一直在怎么使用中间表这个问题上，一直搞不会，现在明白了，原来 结果集 courseinfo 本身也可以作对象，那么，问题简单了</p>
+<p><br></p>
+<p></p>
+<pre><code class="language-python">def course_details(request,id):
+    courseinfo = Course.objects.get(id=id)
+    age_choices = courseinfo.age_choice.all()</code></pre>
+age_choices 为 category 中的数据！<br><br><p></p>
+            </div>
+

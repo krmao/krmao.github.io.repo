@@ -1,0 +1,161 @@
+---
+title: 移动端_IOS【Android框架进阶〖02〗】ThinkAndroid线程池机制
+date: 2013年11月05日 15:48:23
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong>/**************************************************************************************************</strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<a href="http://blog.csdn.net/mkrcpp/article/details/14166627" rel="nofollow" style="color:rgb(106,57,6);text-decoration:none;">http://blog.csdn.net/mkrcpp/article/details/14166627</a></span></strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+<p></p>
+<p><strong>TAApplication</strong>是<strong>ThinkAndroid</strong>的灵魂，整个框架的初始化工作都在这里进行了。</p>
+<p>其中有一个重要的工作，即<strong>初始化线程池机制 ，英文名为TACommandExecutor</strong>。</p>
+<p>之所以称为机制，是因为这不仅仅是一个线程池。</p>
+<p>通过观察代码可以看出，最最重要的代码是</p>
+<p></p>
+<pre><code class="language-java">public void ensureInitialized()
+{
+	if (!initialized)
+	{
+		initialized = true;
+		TALogger.i(TACommandExecutor.this, "CommandExecutor初始化");
+		TACommandQueueManager.getInstance().initialize();
+		TALogger.i(TACommandExecutor.this, "CommandExecutor初始化");
+	}
+}</code></pre>
+<br>
+其中涉及到一个很重要的类，即 <strong>TACommandQueueManager</strong>，看名字就知道这是一个队列管理器 。
+<p></p>
+<p>好，接下来我们就研究下<strong>TACommandQueueManager</strong>，</p>
+<p>非常清晰的，我们看到连个重要的属性，<strong>TAThreadPool</strong>，<strong>TACommandQueue，</strong></p>
+<p>看名字就知道一个是线程池，一个是指令队列。然后 TACommandQueueManager的作用就是初始化线程池和初始化队列。</p>
+<p>通过研究线程池 <strong>TAThreadPool </strong>的代码可以知道，默认仅仅是创建了2个线程，并且在系统启动时运行起来。</p>
+<p>通过研究指令队列<strong>TACommandQueue</strong>的代码可以知道它维护了一个<strong>LinkedBlockingQueue</strong>，一个阻塞队列，由链表实现。</p>
+<p><strong><span style="color:#ff0000;">阻塞队列的好处就是：</span></strong></p>
+<p></p>
+<ul><li>当一个线程A申请从队列中取数据时，如果队列中没有数据，那么线程A就发生阻塞，直到队列中存在数据。</li><li>同样的，当线程B想向队列中存放数据时，如果队列已满，那么线程B阻塞，直到队列中被取走了一个值，这就是咱们熟悉的生产者消费者模式嘛。</li></ul><p></p>
+<p><strong>OK，说了这么多，稍微整理下</strong></p>
+<p></p>
+<pre><code class="language-plain">------------------------------------
+TACommandQueueManager   初始化了    一个阻塞队列和一个线程池，线程池不断的从队列中取指令并执行
+TACommandExecutor       初始化了    TACommandQueueManager 
+TAApplication           初始化了    TACommandExecutor
+------------------------------------</code></pre>
+<p></p>
+<p><span style="font-family:'Microsoft YaHei';">基本上搞清楚了，唯一不清楚的就是什么是Command，阻塞队列维护的是什么样的指令呢，线程池执行的到底是什么呢？</span></p>
+<p><span style="font-family:'Microsoft YaHei';">我们来分析下</span></p>
+<p></p>
+<pre><code class="language-java">TAICommand:			
+	-getRequest()获得请求数据
+	-setRequest(TARequest request)设置请求数据
+	-getResponse()获得返回数据
+	-setResponse(TAResponse response)设置赶回数据
+	-execute()
+	-getResponseListener()获得响应/返回监听器
+	-setResponseListener(TAIResponseListener listener)设置响应/返回监听器
+	-setTerminated(boolean terminated)设置是否终结/停止
+	-isTerminated()判断状态是否停止
+----------------------------------------------------------------------------
+
+		TABaseCommand:基础指令
+			*getRequest()
+			*setRequest(TARequest request)
+			*getResponse()
+			*setResponse(TAResponse response)	
+			*getResponseListener()
+			*setResponseListener(TAIResponseListener responseListener)
+			*setTerminated(boolean terminated)
+			*isTerminated()
+			TARequest: 请求提交的数据
+				Tag		标记
+				Data		数据
+				activityKeyResID
+				activityKey
+			TAResponse:返回的数据，结果
+				Tag		标记
+				Data		数据
+				activityKeyResID		
+				activityKey
+			TAIResponseListener:	数据返回的一个监听器
+				onStart()
+				onSuccess(TAResponse response)
+				onRuning(TAResponse response)
+				onFailure(TAResponse response)
+				onFinish()
+----------------------------------------------------------------------------
+
+				TACommand:
+					TAIResponseListener
+					private Handler handler = new Handler()
+					{
+						public void handleMessage(Message msg)
+						{
+							switch (msg.what)
+							{
+							case command_start:
+								listener.onStart();
+								break;
+							case command_runting:
+								listener.onRuning(getResponse());
+								break;
+							case command_success:
+								listener.onSuccess(getResponse());
+								break;
+							case command_failure:
+								listener.onFailure(getResponse());
+								break;
+							case command_finish:
+								listener.onFinish();
+								break;
+							default:
+								break;
+							}
+						};
+
+					};
+
+					*public final void execute()
+					{
+						onPreExecuteCommand();	//listener.onStart();
+						executeCommand();	//abstract
+						onPostExecuteCommand();	//null
+					}
+----------------------------------------------------------------------------
+
+							TestMVCCommand	异步下载，发送信息通知 hanlder处理数据
+								*protected void executeCommand()
+								 {	
+								 	处理耗时任务
+								 	sendSuccessMessage(arrayList);
+								 }
+----------------------------------------------------------------------------
+</code></pre>
+<p></p>
+<p style="font-family:Arial;font-size:14px;line-height:25.98958396911621px;"><span style="font-family:'Microsoft YaHei';font-size:12px;"></span></p>
+<div style="color:rgb(54,46,43);font-size:14px;font-family:'Microsoft YaHei UI', 'Microsoft YaHei', SimSun, 'Segoe UI', Tahoma, Helvetica, sans-serif, 'Microsoft YaHei', Georgia, Helvetica, Arial, sans-serif, '宋体', PMingLiU, serif;line-height:21px;">
+应用初始化时，初始化了线程池，和Command 阻塞队列，那么由此可知，上面的一系列代码只是为了实现统一管理 <u>处理耗时任务的</u> 线程，</div>
+<div style="font-size:14px;font-family:'Microsoft YaHei UI', 'Microsoft YaHei', SimSun, 'Segoe UI', Tahoma, Helvetica, sans-serif, 'Microsoft YaHei', Georgia, Helvetica, Arial, sans-serif, '宋体', PMingLiU, serif;line-height:21px;">
+<span style="color:#ff0000;background-color:rgb(255,255,255);">再简而言之，Command即类似于 AsynTask 中的 doInBackground()执行的内容。</span></div>
+<div style="font-size:14px;font-family:'Microsoft YaHei UI', 'Microsoft YaHei', SimSun, 'Segoe UI', Tahoma, Helvetica, sans-serif, 'Microsoft YaHei', Georgia, Helvetica, Arial, sans-serif, '宋体', PMingLiU, serif;line-height:21px;">
+<strong><span style="color:#ff0000;background-color:rgb(255,255,255);"><br></span></strong></div>
+<p></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong>/**************************************************************************************************</strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<a href="http://blog.csdn.net/mkrcpp/article/details/14166627" rel="nofollow">http://blog.csdn.net/mkrcpp/article/details/14166627</a></span></strong></span></p>
+<p style="color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+            </div>
+

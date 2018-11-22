@@ -1,0 +1,58 @@
+---
+title: 移动端_IOS【Android框架进阶〖03〗】ThinkAndroid框架总结
+date: 2014年03月11日 09:47:40
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<p style="text-align:center;"><span style="font-family:'Microsoft YaHei';color:rgb(54,46,43);line-height:25.98958396911621px;"><strong>/**************************************************************************************************</strong></span></p>
+<p style="text-align:center;"></p>
+<p style="text-align:center;color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<span style="color:rgb(106,57,6);"></span><a href="http://blog.csdn.net/mkrcpp/article/details/13170649" rel="nofollow" style="color:rgb(106,57,6);text-decoration:none;"></a><a href="http://blog.csdn.net/mkrcpp/article/details/20993533" rel="nofollow">http://blog.csdn.net/mkrcpp/article/details/20993533</a></span></strong></span></p>
+<p style="text-align:center;color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+<span></span>
+<p><br></p>
+<blockquote style="border:none;">
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">用多了框架，觉得也没什么太难的东西，前提是只要我们彻头彻尾的理解了它们。</span></p>
+</blockquote>
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">TA的框架整体来说：</span></p>
+<p></p>
+<ul><li><span style="font-family:'Microsoft YaHei';font-size:12px;">优点：减少了大量的重复代码，提供了简洁的机制，特别是 docommand，得心应手。这个网络请求有一个bug，就是当网络类型转换时，超时设置不管用。</span></li><li><span style="font-family:'Microsoft YaHei';font-size:12px;">缺点：有代码入侵量，很多东西都没用到，文档不全，比如 download ，一直没用过，缓存也没用过，图片也没用过，都是自己写的。</span></li></ul><p></p>
+<blockquote style="border:none;">
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">我最喜欢的应该是其注解机制了，做的最好的应该是 command 注册机制，以后可能有很多command，繁重任务的command ，udp请求，快速请求等。</span></p>
+</blockquote>
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">我综合了final 框架和 TA 框架的注解机制，自己实现了一套框架，命名为 mdevil，基类前缀为M，例如MApplication，总监说我很自恋.....反正是自己用的，无所谓 :)</span></p>
+<blockquote style="border:none;">
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">在这套框架里，拥有了最称手的注解资源绑定机制(个人认为)，然后对于orm，感觉对TA的orm相当不爽，搞的那么复杂，至于final的没去研究，感觉不优美。于是决定采用 OrmLite。拥有完善的文档！在实际项目使用中，有一个需求是使用复合主键，OrmLite虽然没有提供，却提供了唯一性约束，能达到同样的效果，有可能ormlite的性能会慢一点点，但我喜欢：）</span></p>
+</blockquote>
+<blockquote style="border:none;">
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">当真正理解一个应用从开始到形成的时候，就觉得一切皆有可能了。</span></p>
+</blockquote>
+<blockquote style="border:none;">
+<p><span style="font-family:'Microsoft YaHei';font-size:12px;">前路漫漫，Android只是一个开始！</span></p>
+</blockquote>
+<p><br></p>
+<p></p>
+<p style="text-align:center;color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong>/**************************************<span style="color:rgb(54,46,43);font-family:'Microsoft YaHei';line-height:25.984375px;text-align:center;"><strong>*******<span style="color:rgb(54,46,43);font-family:'Microsoft YaHei';line-height:25.984375px;text-align:center;"><strong>*******</strong></span></strong></span>**********************************<span style="color:rgb(54,46,43);font-family:'Microsoft YaHei';line-height:25.984375px;text-align:center;"><strong>************<span style="color:rgb(54,46,43);font-family:'Microsoft YaHei';line-height:25.984375px;text-align:center;"><strong>************</strong></span></strong></span>*******</strong></span></p>
+<p style="text-align:center;color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';font-size:12px;"><strong><span style="color:rgb(255,0,0);"> *  本博客为</span><span style="color:rgb(51,51,255);">CSDN博主【MK】原创</span><span style="color:rgb(255,0,0);">，博客</span><span style="line-height:25.98958396911621px;color:rgb(255,0,0);">地址：<span style="color:rgb(106,57,6);"></span><a href="http://blog.csdn.net/mkrcpp/article/details/13170649" rel="nofollow" style="color:rgb(106,57,6);text-decoration:none;"></a><a href="http://blog.csdn.net/mkrcpp/article/details/20993533" rel="nofollow">http://blog.csdn.net/mkrcpp/article/details/20993533</a></span></strong></span></p>
+<p style="text-align:center;color:rgb(54,46,43);font-family:Arial;font-size:14px;line-height:25.98958396911621px;">
+<span style="font-family:'Microsoft YaHei';"><span style="font-size:12px;"> **********************************************************************************************************************/</span></span></p>
+<br><p><br></p>
+<p><br></p>
+<p><span></span></p>
+<p><span></span></p>
+<p><span></span></p>
+<p><span></span></p>
+<p><span></span></p>
+            </div>
+

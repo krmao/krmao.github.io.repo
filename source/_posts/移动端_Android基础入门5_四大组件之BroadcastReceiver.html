@@ -1,0 +1,196 @@
+---
+title: 移动端_IOS【Android基础入门〖5〗】四大组件之BroadcastReceiver
+date: 2013年09月24日 22:47:43
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h1>0  简介</h1>
+<div>
+<div>       BroadcastReceiver也就是“广播接收者”的意思，顾名思义，它就是用来接收来自系统和应用中的 </div>
+<div>广播。</div>
+<div>       在Android系统中，广播体现在方方面面，例如当开机完成后系统会产生一条广播，接收到这条广播 </div>
+<div>就能实现开机启动服务的功能；当网络状态改变时系统会产生一条广播，接收到这条广播就能及时地做出提 </div>
+<div>示和保存数据等操作；当电池电量改变时，系统会产生一条广播，接收到这条广播就能在电量低时告知用户 </div>
+<div>及时保存进度，等等。</div>
+<div>       Android中的广播机制设计的非常出色，很多事情原本需要开发者亲自操作的，现在只需等待广播告 </div>
+<div>知自己就可以了，大大减少了开发的工作量和开发周期。</div>
+<div>
+<hr></div>
+</div>
+<h1>1  普通广播</h1>
+<div>
+<div>       普通广播对于多个接收者来说是完全异步的，通常每个接收者都无需等待即可以接收到广播，接收者相互之 </div>
+<div>间不会有影响。对于这种广播，接收者无法终止广播，即无法阻止其他接收者的接收动作。</div>
+<div><span style="color:#ff0000;"><strong>动态接收器高优先级 &gt; 动态接收器低优先级 &gt; 静态接收器高优先级 &gt; 静态接收器低优先级</strong></span></div>
+<div> </div>
+</div>
+<h3>    1.1 自定义广播 MyReceiver.java</h3>
+<div>
+<pre><code class="language-java">package com.broadcastreceiver;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+public class MyReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        // TODO 自动生成的方法存根
+        Toast.makeText(context, intent.getAction()+intent.getStringExtra("message"), Toast.LENGTH_SHORT).show();
+    }
+}</code></pre>
+<br><br></div>
+<h3>    1.2 注册广播</h3>
+<div>
+<pre><code class="language-html">&lt;receiver android:name="com.broadcastreceiver.MyReceiver"&gt;
+    &lt;intent-filter &gt;
+        &lt;action android:name="michael.FIRSTRECEIVER"/&gt;
+    &lt;/intent-filter&gt;
+&lt;/receiver&gt;</code></pre>
+<br></div>
+<h3>    1.3 发送广播</h3>
+<div>
+<pre><code class="language-java">package com.broadcastreceiver;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        Button btn_send=(Button)findViewById(R.id.btn_send);
+        btn_send.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setAction("michael.FIRSTRECEIVER");
+                intent.putExtra("message", "我是神奇的广播消息！");
+                sendBroadcast(intent);
+            }
+        });
+    }
+}</code></pre>
+<br><br></div>
+<h1>2  有序广播</h1>
+<div>
+<div>       有序广播比较特殊，它每次只发送到优先级较高的接收者那里，然后由优先级高的接受者再传播到优先级低 </div>
+<div>的接收者那里，优先级高的接收者有能力终止这个广播</div>
+<div><strong><span style="color:#ff0000;">如果静态接收器的优先级高于动态接收器的优先级，那么还是静态接收器先接收到广播（比如接收短信）</span></strong></div>
+<div> </div>
+</div>
+<h3>    2.1 在前一节的基础上再新建个 广播 YourReceiver.java</h3>
+<div>
+<pre><code class="language-java">package com.broadcastreceiver;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+public class YourReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Bundle bundle=getResultExtras(true);
+        String first=bundle.getString("first");
+        Toast.makeText(context, "上一个接收器转播的数据为："+first, Toast.LENGTH_LONG).show();
+    }
+}</code></pre>
+<br><br></div>
+<div>   <strong> <span style="font-size:12px;">2.2 代码注册广播</span></strong></div>
+<div><br></div>
+<div>
+<pre><code class="language-java">package com.broadcastreceiver;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+public class MainActivity extends Activity {
+    YourReceiver yourreceiver=null;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        yourreceiver=new YourReceiver();
+        Button btn_send=(Button)findViewById(R.id.btn_send);
+        btn_send.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setAction("michael.FIRSTRECEIVER");
+                intent.putExtra("message", "我是神奇的广播消息！");
+                sendBroadcast(intent);
+            }
+        });
+        
+        //代码动态注册广播
+        IntentFilter filter=new IntentFilter();
+        filter.addAction("michael.FIRSTRECEIVER");
+        filter.setPriority(10);
+        registerReceiver(yourreceiver, filter);
+    }
+    @Override
+    protected void onDestroy() {
+        //程序退出前取消注册广播
+        unregisterReceiver(yourreceiver);
+        super.onDestroy();
+    }
+}</code></pre>
+<br></div>
+<div><strong>广播的发送不局限于当前应用程序，其它程序发送广播的话也可接收到。</strong></div>
+<h1><span style="color:rgb(255,0,0);">2.3  接收优先级</span></h1>
+<div>
+<div>       静态接收器优先级低于动态接收器，也就是说，无论多么高级别的静态接收器和多么低级别的动态接收器都 </div>
+<div>接收同一广播，永远都是动态接收器先接收到(相对于普通广播)</div>
+<div>       动态接收器也可以设置优先级，高优先级的接收器会在低优先级的接收器之前接收到广播，同样优先级的动 </div>
+<div>态接收器,谁先注册到系统，谁就抢先接收到广播。</div>
+<div> </div>
+<div><strong><span style="color:#ff0000;"><u>举例：</u></span></strong></div>
+<div>
+<div>假设有如下优先级的5个接收器</div>
+<div>1.动态A（优先级=1）</div>
+<div>2.动态B（优先级=2）</div>
+<div>3.动态C（优先级=2）</div>
+<div>4.静态D（优先级=1）</div>
+<div>5.静态E（优先级=2）并且B先于C注册</div>
+<div> </div>
+<div><strong>普通广播接收的顺序</strong></div>
+<div><strong>B C A E D    (动态接收器高优先级 &gt; 动态接收器低优先级 &gt; 静态接收器高优先级 &gt; 静态接收器低优先级 )</strong></div>
+<div><strong>有序广播接收的顺序</strong></div>
+<div><strong>B C E A D    (如果静态接收器的优先级高于动态接收器的优先级，那么还是静态接收器先接收到广播)</strong></div>
+<div> </div>
+</div>
+</div>
+<div>这是在一片博客上看到的图，忘记原创地址了，罪过啊</div>
+<div><br></div>
+<div> </div>
+<div> <img src="https://img-blog.csdn.net/20130924224724921" alt=""></div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div><strong> <span style="color:rgb(255,0,0);font-family:Arial;font-size:17.77777862548828px;line-height:25.98958396911621px;"><u>注：转载请注明出处 :)   毕竟代码是一个一个敲出来的啊，O(∩_∩)O~</u></span></strong></div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div> </div>
+<div> </div>
+            </div>
+

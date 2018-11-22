@@ -1,0 +1,243 @@
+---
+title: 移动端_IOS【Android基础入门〖7〗】SurfaceView坦克大战之世界地图
+date: 2013年09月13日 15:28:00
+categories: [技术]
+tags: [移动端]
+---
+
+<link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+
+<div class="htmledit_views" id="content_views">
+                
+<h1>1  自定义 SurfaceView</h1>
+<p>WarView.java  (世界战场)           </p>
+<pre><code class="language-java">package com.mytank;
+import java.util.Vector;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+public class WarView extends SurfaceView implements SurfaceHolder.Callback {
+    SurfaceHolder mholder;
+    boolean run_flag;
+    Canvas canvas;
+    DrawThread thread;
+    
+    Vector&lt;Wall&gt;walllist=new Vector&lt;Wall&gt;();
+    
+    int row;//行
+    int col;//列
+    int warmap[][];
+    
+    float x=10,y=10;
+    
+    public WarView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mholder=this.getHolder();
+        
+        if(mholder!=null)
+            mholder.addCallback(this);
+    }
+    
+    //初始化地图
+    public void initmap()
+    {
+        //0 空， 1 墙
+        for(int i=0;i&lt;col;i++)
+        {
+            warmap[0][i]=1;
+            warmap[1][i]=1;
+            Wall wall=new Wall(0,i);
+            walllist.add(wall);
+            wall=new Wall(1,i);
+            walllist.add(wall);
+        }
+        for(int i=0;i&lt;10;i++)
+        {
+            warmap[i][10]=1;
+            warmap[i][11]=1;
+            Wall wall=new Wall(i,10);
+            walllist.add(wall);
+            wall=new Wall(i,11);
+            walllist.add(wall);
+        }
+    }
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        run_flag=true;
+        row=this.getHeight()/Common.CELL_LENGTH;
+        col=this.getWidth()/Common.CELL_LENGTH;
+        warmap=new int[row][col];
+        thread=new DrawThread();
+        initmap();
+        thread.start();
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO 自动生成的方法存根
+        x=event.getX();
+        y=event.getY();
+        
+        
+        /*  备注:  一定要将return super.onTouchEvent(event)修改为return true
+         *  原因： 
+         *        1: 父类的onTouchEvent(event)方法没有做任何处理，并且返回了false。;
+         *        2: 一旦返回false，将不再收到 MotionEvent.ACTION_MOVE 及 MotionEvent.ACTION_UP 事件;
+         */
+        return true;
+    }
+ 
+    //自定义 界面绘制 线程
+    class DrawThread extends Thread
+    {
+        @Override
+        public void run() {
+            
+            //画刷
+            Paint paint=new Paint();
+            paint.setStyle(Style.FILL);
+            paint.setColor(Color.rgb(255, 0, 0));    //红绿蓝
+            
+            Paint bkpaint=new Paint();
+            bkpaint.setStyle(Style.FILL);            //设置填充方式
+            bkpaint.setColor(Color.rgb(2,17,17));    //红绿蓝
+            
+            while(run_flag)
+            {
+                //锁定画布
+                canvas=mholder.lockCanvas();
+                if (canvas == null)
+                    continue;
+                
+                //绘制背景
+                canvas.drawRect(0, 0, Common.CELL_LENGTH*col, Common.CELL_LENGTH*row, bkpaint);
+                
+                //绘制手势跟踪
+                canvas.drawCircle(x, y, 15, paint);
+                
+                //绘制墙壁
+                for(int i=0;i&lt;walllist.size();i++)
+                    walllist.get(i).Draw(canvas);
+                
+                //取消锁定
+                mholder.unlockCanvasAndPost(canvas);
+            }
+        }
+    }
+    
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        run_flag=false;        //关闭界面绘制线程
+    }
+}</code></pre>
+<p></p>
+<h1>2  在布局中使用自定义的 WarView</h1>
+<p>main_layout.xml</p>
+<p></p>
+<pre><code class="language-html">&lt;FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"&gt;
+    &lt;com.mytank.WarView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/&gt;
+&lt;/FrameLayout&gt;</code></pre>
+<p></p>
+<h1>3  封装的 墙块类</h1>
+<p>Wall.java</p>
+<p></p>
+<pre><code class="language-java">package com.mytank;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Paint.Style;
+/**
+ * @author michael.mao
+ * @description 封装的 墙块类，包含自绘制方法
+ */
+public class Wall {
+    
+    public int mrow;    //该墙壁所在行
+    public int mcol;
+    Paint inPaint;        //墙壁内边框画刷
+    Paint outPaint;
+    Rect inRect;
+    Rect outRect;
+    
+    public Wall(int row, int col)
+    {
+        this.mrow=row;
+        this.mcol=col;
+        
+        inPaint=new Paint();
+        inPaint=new Paint();
+        inPaint.setStyle(Style.FILL);
+        inPaint .setColor(Color.rgb(86, 53, 35));//红绿蓝
+        
+        outPaint=new Paint();
+        outPaint=new Paint();
+        outPaint.setStyle(Style.STROKE);
+        outPaint.setColor(Color.rgb(98, 98, 98));
+        
+        inRect=new Rect( mcol*Common.CELL_LENGTH+1,mrow*Common.CELL_LENGTH+1,
+                       ( mcol+1)*Common.CELL_LENGTH-1,(mrow+1)*Common.CELL_LENGTH-1);
+        outRect=new Rect( mcol*Common.CELL_LENGTH,mrow*Common.CELL_LENGTH,
+                        ( mcol+1)*Common.CELL_LENGTH,(mrow+1)*Common.CELL_LENGTH);
+    }
+    
+    public void Draw(Canvas canvas)
+    {
+        canvas.drawRect(inRect,inPaint);
+        canvas.drawRect(outRect,outPaint);
+    }
+}</code></pre>
+<br><p></p>
+<h1>4  常量值</h1>
+<p>Common.java</p>
+<p></p>
+<pre><code class="language-java">package com.mytank;
+public class Common {
+    public static int CELL_LENGTH=10;    //块宽    战场被分成 M行 N 列, CELL_LENGTH==行高==列宽
+}</code></pre>
+<p></p>
+<h1>5  主类</h1>
+<div dir="ltr">MainActivity.java</div>
+<div dir="ltr">
+<pre><code class="language-java">package com.mytank;
+import android.os.Bundle;
+import android.app.Activity;
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_layout);
+    }
+}</code></pre>
+</div>
+<h1>6    结果展示</h1>
+<div> </div>
+<div>
+<div>             <img src="https://img-blog.csdn.net/20130913152228015" alt="" width="368" height="319"></div>
+</div>
+<div>             <img src="https://img-blog.csdn.net/20131027162839640" width="240" height="427" alt=""></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+<div><span style="font-size:18px;color:#ff0000;"><strong><u>转载请注明出处 :)</u></strong></span></div>
+<div><br></div>
+<div><br></div>
+<div><br></div>
+            </div>
+
